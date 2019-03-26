@@ -96,6 +96,30 @@ void OGLWidget::paintGL()
         glVertex3f(0.5, -0.5, 1);
     glEnd();
 
+    // Hinteres Viereck
+    glBegin(GL_QUADS);
+        glColor3f(1.0-c, 0.0+c, 0.0+c);
+        glVertex3f(-0.5, -0.5, 1);
+        glColor3f(0.0+c, 1.0-c, 0.0+c);
+        glVertex3f( 0.5, -0.5, 1);
+        glColor3f(0.0+c, 0.0+c, 1.0+c);
+        glVertex3f( 0.5,  0.5, 1);
+        glColor3f(1.0-c, 0.0+c, 0.0+c);
+        glVertex3f(-0.5, 0.5, 1);
+    glEnd();
+
+    // Oberes Viereck
+    glBegin(GL_QUADS);
+        glColor3f(1.0-c, 0.0+c, 0.0+c);
+        glVertex3f(0.5, 0.5, 0);
+        glColor3f(0.0+c, 1.0-c, 0.0+c);
+        glVertex3f( -0.5, 0.5, 0);
+        glColor3f(0.0+c, 0.0+c, 1.0+c);
+        glVertex3f( -0.5,  0.5, 1);
+        glColor3f(1.0-c, 0.0+c, 0.0+c);
+        glVertex3f(0.5, 0.5, 1);
+    glEnd();
+
 }
 
 void OGLWidget::resizeGL(int w, int h)
