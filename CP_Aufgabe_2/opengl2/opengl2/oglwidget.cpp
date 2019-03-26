@@ -70,73 +70,73 @@ void OGLWidget::paintGL()
     // Vorderes Viereck
     glBegin(GL_QUADS);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(-0.5, -0.5, 0);
+        glVertex3f(-0.5, -0.5, -0.5);
         glColor3f(0.0f+c, 1.0f-c, 0.0f+c);
-        glVertex3f( 0.5, -0.5, 0);
+        glVertex3f( 0.5, -0.5, -0.5);
         glColor3f(0.0f+c, 0.0f+c, 1.0f+c);
-        glVertex3f( 0.5,  0.5, 0);
+        glVertex3f( 0.5,  0.5, -0.5);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(-0.5, 0.5, 0);
+        glVertex3f(-0.5, 0.5, -0.5);
     glEnd();
 
     // Linkes Viereck
     glBegin(GL_QUADS);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(-0.5, -0.5, 0);
+        glVertex3f(-0.5, -0.5, -0.5);
         glColor3f(0.0f+c, 1.0f-c, 0.0f+c);
-        glVertex3f( -0.5, -0.5, 1);
+        glVertex3f( -0.5, -0.5, 0.5);
         glColor3f(0.0f+c, 0.0f+c, 1.0f+c);
-        glVertex3f( -0.5,  0.5, 1);
+        glVertex3f( -0.5,  0.5, 0.5);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(-0.5, 0.5, 0);
+        glVertex3f(-0.5, 0.5, -0.5);
     glEnd();
 
     // Rechtes Viereck
     glBegin(GL_QUADS);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, -0.5, 0);
+        glVertex3f(0.5, -0.5, -0.5);
         glColor3f(0.0f+c, 1.0f-c, 0.0f+c);
-        glVertex3f( 0.5, -0.5, 1);
+        glVertex3f( 0.5, -0.5, 0.5);
         glColor3f(0.0f+c, 0.0f+c, 1.0f+c);
-        glVertex3f( 0.5,  0.5, 1);
+        glVertex3f( 0.5,  0.5, 0.5);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, 0.5, 0);
+        glVertex3f(0.5, 0.5, -0.5);
     glEnd();
 
     // Unteres Viereck
     glBegin(GL_QUADS);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, -0.5, 0);
+        glVertex3f(0.5, -0.5, -0.5);
         glColor3f(0.0f+c, 1.0f-c, 0.0f+c);
-        glVertex3f( -0.5, -0.5, 0);
+        glVertex3f( -0.5, -0.5, -0.5);
         glColor3f(0.0f+c, 0.0f+c, 1.0f+c);
-        glVertex3f( -0.5,  -0.5, 1);
+        glVertex3f( -0.5,  -0.5, 0.5);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, -0.5, 1);
+        glVertex3f(0.5, -0.5, 0.5);
     glEnd();
 
     // Hinteres Viereck
     glBegin(GL_QUADS);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(-0.5, -0.5, 1);
+        glVertex3f(-0.5, -0.5, 0.5);
         glColor3f(0.0f+c, 1.0f-c, 0.0f+c);
-        glVertex3f( 0.5, -0.5, 1);
+        glVertex3f( 0.5, -0.5, 0.5);
         glColor3f(0.0f+c, 0.0f+c, 1.0f+c);
-        glVertex3f( 0.5,  0.5, 1);
+        glVertex3f( 0.5,  0.5, 0.5);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(-0.5, 0.5, 1);
+        glVertex3f(-0.5, 0.5, 0.5);
     glEnd();
 
     // Oberes Viereck
     glBegin(GL_QUADS);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, 0.5, 0);
+        glVertex3f(0.5, 0.5, -0.5);
         glColor3f(0.0f+c, 1.0f-c, 0.0f+c);
-        glVertex3f( -0.5, 0.5, 0);
+        glVertex3f( -0.5, 0.5, -0.5);
         glColor3f(0.0f+c, 0.0f+c, 1.0f+c);
-        glVertex3f( -0.5,  0.5, 1);
+        glVertex3f( -0.5,  0.5, 0.5);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, 0.5, 1);
+        glVertex3f(0.5, 0.5, 0.5);
     glEnd();
 
 }
