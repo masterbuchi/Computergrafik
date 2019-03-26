@@ -16,8 +16,7 @@ public:
 public slots:
     void setParamA( int newa );
     void setParamB( int newb );
-    void setParamC( int newa );
-    void setParamD( int newb );
+
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
@@ -26,8 +25,6 @@ protected:
 protected:
     int parama;
     int paramb;
-    int paramc;
-    int paramd;
 
 };
 
