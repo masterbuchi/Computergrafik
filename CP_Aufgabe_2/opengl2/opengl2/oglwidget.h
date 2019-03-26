@@ -10,14 +10,14 @@ class OGLWidget : public QOpenGLWidget,
     Q_OBJECT
 
 public:
-    OGLWidget(QWidget *parent = 0);
+    OGLWidget(QWidget *parent = nullptr);
     ~OGLWidget();
 
 public slots:
     void setParamA( int newa );
     void setParamB( int newb );
-    void setParamC( int newa );
-    void setParamD( int newb );
+    void setParamC( int newc );
+    void setParamD( int newd );
 protected:
     void initializeGL();
     void resizeGL(int w, int h);

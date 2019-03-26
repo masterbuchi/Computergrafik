@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_OGLWidget_t {
-    QByteArrayData data[8];
-    char stringdata0[61];
+    QByteArrayData data[10];
+    char stringdata0[71];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -38,11 +38,13 @@ QT_MOC_LITERAL(3, 21, 4), // "newa"
 QT_MOC_LITERAL(4, 26, 9), // "setParamB"
 QT_MOC_LITERAL(5, 36, 4), // "newb"
 QT_MOC_LITERAL(6, 41, 9), // "setParamC"
-QT_MOC_LITERAL(7, 51, 9) // "setParamD"
+QT_MOC_LITERAL(7, 51, 4), // "newc"
+QT_MOC_LITERAL(8, 56, 9), // "setParamD"
+QT_MOC_LITERAL(9, 66, 4) // "newd"
 
     },
     "OGLWidget\0setParamA\0\0newa\0setParamB\0"
-    "newb\0setParamC\0setParamD"
+    "newb\0setParamC\0newc\0setParamD\0newd"
 };
 #undef QT_MOC_LITERAL
 
@@ -63,13 +65,13 @@ static const uint qt_meta_data_OGLWidget[] = {
        1,    1,   34,    2, 0x0a /* Public */,
        4,    1,   37,    2, 0x0a /* Public */,
        6,    1,   40,    2, 0x0a /* Public */,
-       7,    1,   43,    2, 0x0a /* Public */,
+       8,    1,   43,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::Int,    3,
     QMetaType::Void, QMetaType::Int,    5,
-    QMetaType::Void, QMetaType::Int,    3,
-    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::Int,    7,
+    QMetaType::Void, QMetaType::Int,    9,
 
        0        // eod
 };
