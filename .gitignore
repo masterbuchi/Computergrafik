@@ -16,3 +16,4 @@ CP_Aufgabe_2/opengl2/build-opengl2-Desktop_Qt_5_12_1_MSVC2017_32bit-Debug/Makefi
 CP_Aufgabe_2/opengl2/build-opengl2-Desktop_Qt_5_12_1_MSVC2017_32bit-Debug/Makefile.Debug
 CP_Aufgabe_2/opengl2/build-opengl2-Desktop_Qt_5_12_1_MSVC2017_32bit-Debug/Makefile.Release
 CP_Aufgabe_2/opengl2/build-opengl2-Desktop_Qt_5_12_1_MSVC2017_32bit-Debug/ui_mainwindow.h
+*.user

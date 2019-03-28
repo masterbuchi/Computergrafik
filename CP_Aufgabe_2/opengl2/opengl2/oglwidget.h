@@ -18,6 +18,7 @@ public slots:
     void setParamB( int newb );
     void setParamC( int newc );
     void setParamD( int newd );
+    void setParamR( int newr );
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
@@ -28,7 +29,7 @@ protected:
     int paramb;
     int paramc;
     int paramd;
-
+    int paramr;
 };
 
 
