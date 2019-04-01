@@ -68,34 +68,115 @@ void OGLWidget::paintGL()
     float s = paramc*3.6f;   // degree to rotate
     float t = paramd*3.6f;   // degree to rotate
 
-    float diceRotation = paramr * 1.8f;
+    float openingSlide180 = paramr * 1.8f;
+    float openingSlide90 = paramr * 0.9f;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
     glRotatef(r, 1.0f, 0.0f, 0.0f); // Rotate by r degrees around x axis
-    glRotatef(s, 0.0f, 1.0f, 0.0f); // Rotate by s degrees around y axis
+    glRotatef(s, 0.0f, -1.0f, 0.0f); // Rotate by s degrees around y axis
     glRotatef(t, 0.0f, 0.0f, 1.0f); // Rotate by t degrees around z axis
+
+
+//      // Alter Deckel
+//    glPushMatrix();
+
+//    glTranslatef(0.5f, 0.5, 0);             // Punkt um den man rotieren will
+//    glRotatef(opening, 0, 0, -1.0f);
+//    glTranslatef(-0.5f, -0.5f, 0);          // Zurück an die eigentliche Stelle transformieren
+
+//    // Oberes Viereck - Deckel
+//    glBegin(GL_QUADS);
+//        glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
+//        glVertex3f(0.5, 0.5, -0.5); // hinten rechts
+//        glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
+//        glVertex3f( -0.5, 0.5, -0.5); // hinten links
+//        glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
+//        glVertex3f( -0.5,  0.5, 0.5); // vorne links
+//        glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
+//        glVertex3f(0.5, 0.5, 0.5); // vorne rechts
+//    glEnd();
+
+//    glPopMatrix();
 
     glPushMatrix();
 
-    glTranslatef(0.5f, 0.5, 0);             // Punkt um den man rotieren will
-    glRotatef(diceRotation, 0, 0, -1.0f);
+    glTranslatef(0.5f, 0.5f, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide90, 0, 0, -1.0f);
     glTranslatef(-0.5f, -0.5f, 0);          // Zurück an die eigentliche Stelle transformieren
 
-    // Oberes Viereck - Deckel
+    // Oberes Rechteck 1
     glBegin(GL_QUADS);
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, 0.5, -0.5);
-        glColor3f(0.0f+c, 1.0f-c, 0.0f+c);
-        glVertex3f( -0.5, 0.5, -0.5);
-        glColor3f(0.0f+c, 0.0f+c, 1.0f+c);
-        glVertex3f( -0.5,  0.5, 0.5);
+        glVertex3f(0.5, 0.5, -0.5); // hinten rechts
         glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
-        glVertex3f(0.5, 0.5, 0.5);
+        glVertex3f( 0.25, 0.5, -0.5); // hinten links
+        glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
+        glVertex3f( 0.25,  0.5, 0.5); // vorne links
+        glColor3f(1.0f-c, 0.0f+c, 0.0f+c);
+        glVertex3f(0.5, 0.5, 0.5); // vorne rechts
     glEnd();
 
+    glTranslatef(0.25f, 0.5f, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide180, 0, 0, 1.0f);
+    glTranslatef(-0.25f, -0.5f, 0);         // Zurück an die eigentliche Stelle transformieren
+
+    // Oberes Rechteck 2
+    glBegin(GL_QUADS);
+        glColor3f(0.0f-c, 1.0f+c, 0.0f+c);
+        glVertex3f(0.25, 0.5, -0.5); // hinten rechts
+        glColor3f(0.0f-c, 1.0f+c, 0.0f+c);
+        glVertex3f( 0, 0.5, -0.5); // hinten links
+        glColor3f(0.0f-c, 1.0f+c, 0.0f+c);
+        glVertex3f( 0,  0.5, 0.5); // vorne links
+        glColor3f(0.0f-c, 1.0f+c, 0.0f+c);
+        glVertex3f(0.25, 0.5, 0.5); // vorne rechts
+    glEnd();
+
+    glTranslatef(0, 0.5f, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide180, 0, 0, -1.0f);
+    glTranslatef(0, -0.5f, 0);         // Zurück an die eigentliche Stelle transformieren
+
+
+    // Oberes Rechteck 3
+    glBegin(GL_QUADS);
+        glColor3f(0.0f-c, 0.0f+c, 1.0f+c);
+        glVertex3f(0, 0.5, -0.5); // hinten rechts
+        glColor3f(0.0f-c, 0.0f+c, 1.0f+c);
+        glVertex3f( -0.25, 0.5, -0.5); // hinten links
+        glColor3f(0.0f-c, 0.0f+c, 1.0f+c);
+        glVertex3f( -0.25,  0.5, 0.5); // vorne links
+        glColor3f(0.0f-c, 0.0f+c, 1.0f+c);
+        glVertex3f(0, 0.5, 0.5); // vorne rechts
+    glEnd();
+
+    glTranslatef(-0.25f, 0.5f, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide180, 0, 0, 1.0f);
+    glTranslatef(0.25f, -0.5f, 0);         // Zurück an die eigentliche Stelle transformieren
+
+    // Oberes Rechteck 4
+    glBegin(GL_QUADS);
+        glColor3f(1.0f-c, 1.0f+c, 1.0f+c);
+        glVertex3f(-0.25, 0.5, -0.5); // hinten rechts
+        glColor3f(1.0f-c, 1.0f+c, 1.0f+c);
+        glVertex3f(-0.5, 0.5, -0.5); // hinten links
+        glColor3f(1.0f-c, 1.0f+c, 1.0f+c);
+        glVertex3f(-0.5,  0.5, 0.5); // vorne links
+        glColor3f(1.0f-c, 1.0f+c, 1.0f+c);
+        glVertex3f(-0.25, 0.5, 0.5); // vorne rechts
+    glEnd();
+
+
+
     glPopMatrix();
+
+
+
+
+
+
+
 
     // Vorderes Viereck
     glBegin(GL_QUADS);

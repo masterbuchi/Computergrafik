@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.1
+** Created by: Qt User Interface Compiler version 5.12.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -32,6 +32,7 @@ public:
     QSlider *sliderB;
     QSlider *sliderC;
     QSlider *sliderD;
+    QSlider *sliderR;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -84,10 +85,16 @@ public:
 
         verticalLayout->addWidget(sliderD);
 
+        sliderR = new QSlider(centralWidget);
+        sliderR->setObjectName(QString::fromUtf8("sliderR"));
+        sliderR->setOrientation(Qt::Horizontal);
+
+        verticalLayout->addWidget(sliderR);
+
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 742, 21));
+        menuBar->setGeometry(QRect(0, 0, 742, 26));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
