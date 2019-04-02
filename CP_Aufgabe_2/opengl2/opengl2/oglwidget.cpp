@@ -92,12 +92,12 @@ void OGLWidget::paintGL()
 
 
     //Material: (für farbige reflexionen (schwarz deaktiviert)
-    GLfloat mWhite[] = {1.0, 1.0, 1.0, 1.0};
+   /* GLfloat mWhite[] = {1.0, 1.0, 1.0, 1.0};
     GLfloat mGreen[] = {0.0, 1.0, 0.0, 1.0};
     glMaterialfv(GL_FRONT, GL_SPECULAR, mGreen);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mWhite);
     glMaterialf(GL_FRONT, GL_SHININESS, 100.0);
-
+*/
 
     float c = parama/100.0f; // change of color
     float r = paramb*3.6f;   // degree to rotate
@@ -110,7 +110,7 @@ void OGLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
-    glRotatef(r, 1.0f, 0.0f, 0.0f); // Rotate by r degrees around x axis
+    glRotatef(r, -1.0f, 0.0f, 0.0f); // Rotate by r degrees around x axis
     glRotatef(s, 0.0f, -1.0f, 0.0f); // Rotate by s degrees around y axis
     glRotatef(t, 0.0f, 0.0f, 1.0f); // Rotate by t degrees around z axis
 
