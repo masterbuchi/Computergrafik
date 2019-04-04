@@ -85,9 +85,16 @@ void OGLWidget::paintGL()
       GLfloat L1Position[4] = {2.0f, 2.0f, 2.0f, 2.0f}; //Position Ersten drei Position in Koordinatensystem
       glLightfv(GL_LIGHT0, GL_POSITION, &L1Position[3]); //welches licht, welche Eigenschaft, welchen Wert
 
-      GLfloat L2Position[4] = {-2.0f, 2.0f, 2.0f, 2.0f}; //Position Ersten drei Position in Koordinatensystem
+      //    //Spot
+      GLfloat LSPot[] = {0.7f, 0.7f, 0.7f, 1.0f};
+      glLightfv(GL_LIGHT0, GL_DIFFUSE, LSPot);
+
+      GLfloat L2Position[4] = {-2.0f, -2.0f, -2.0f, 2.0f}; //Position Ersten drei Position in Koordinatensystem
       glLightfv(GL_LIGHT1, GL_POSITION, &L2Position[3]); //welches licht, welche Eigenschaft, welchen Wert
 
+      // Spot 2
+      GLfloat LSPot2[] = {0.7f, 0.7f, 0.7f, 1.0f};
+      glLightfv(GL_LIGHT1, GL_DIFFUSE, LSPot2);
 
 //    //Ambiente: (hat keine position)
 //    GLfloat LAmbient[] = {1.0f, 1.0f, 1.0f, 1.0}; //RED GREEN BLUE ALPHA(immer 1.0) Alle Farbwerte gleich = weißes licht
@@ -96,17 +103,6 @@ void OGLWidget::paintGL()
 //    //Diffuse
 //    //GLfloat LDiffuse[] = {0.6, 0.6, 0.6, 1.0};
 //    //glLightfv(GL_LIGHT1, GL_DIFFUSE, LDiffuse);
-
-//    //Spot
-    GLfloat LSPot[] = {0.13f, 0.70f, 0.80f, 0.5f};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LSPot);
-
-    // Spot 2
-    GLfloat LSPot2[] = {1.0f, 0.0f, 0.0f, 0.5f};
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, LSPot2);
-
-
-
 
 //    //Material: (für farbige reflexionen (schwarz deaktiviert)
 //    GLfloat mWhite[] = {255.0, 255.0, 255.0, 1.0};
