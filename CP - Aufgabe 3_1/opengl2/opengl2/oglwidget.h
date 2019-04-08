@@ -20,6 +20,7 @@ public slots:
     void setParamD( int newd );
     void setParamR( int newr );
         void einheitsquadrat();
+        void boden();
 protected:
     void initializeGL();
     void resizeGL(int w, int h);

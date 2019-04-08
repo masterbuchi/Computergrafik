@@ -4,8 +4,8 @@ OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
 {
     parama = 0;
-    paramb = 0;
-    paramc = 0;
+    paramb = 20;
+    paramc = 20;
     paramd = 0;
 
     // Rotation value at the start
@@ -54,15 +54,26 @@ void OGLWidget::initializeGL()
     initializeOpenGLFunctions();
 
 
-    GLfloat Ambient[4] = {0.8f, 0.8f, 0.8f, 1.0f};
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    //    glShadeModel(GL_SMOOTH);
+
+    // GLfloat Ambient[4] = {0.2f, 0.2f, 0.2f, 1.0f};
     //Lighting set up
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Ambient);
-    glEnable(GL_LIGHT0);
+    // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Ambient);
     glEnable(GL_LIGHTING);
 
+    GLfloat L2Position[4] = {0.5f,0.5f,0.5f,0 }; //Position Ersten drei Position in Koordinatensystem
+    glLightfv(GL_LIGHT0, GL_POSITION, &L2Position[3]); //welches licht, welche Eigenschaft, welchen Wert
 
-    glEnable(GL_DEPTH_TEST);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    //Diffuse
+    GLfloat LDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, LDiffuse);
+    glEnable(GL_LIGHT0);
+
+
+
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
 
 
@@ -71,58 +82,71 @@ void OGLWidget::initializeGL()
 
 void OGLWidget::einheitsquadrat() {
     glBegin(GL_QUADS);
-    glColor3f(1.0f, 1.0f,0);
+    glColor3f(100.0f, 100.0f,0);
     glVertex3f(0,0,0); // hinten rechts
     glVertex3f(1.0f,0,0); // hinten links
     glVertex3f(1.0f,1.0f,0); // vorne links
     glVertex3f(0,1.0f,0); // vorne rechts
     glEnd();
 }
-
+void OGLWidget::boden() {
+    glBegin(GL_QUADS);
+    glColor3f(100.0f, 100.0f,100.0f);
+    glVertex3f(50.0f,-0.1f,-50.0f); // hinten rechts
+    glVertex3f(-50.0f,-0.1f,-50.0f); // hinten links
+    glVertex3f(-50.0f,-0.1f,50.0f); // vorne links
+    glVertex3f(50.0f,-0.1f,50.0f); // vorne rechts
+    glEnd();
+}
 
 void OGLWidget::paintGL()
 {
 
-    GLfloat L2Position[4] = {1.0f, 1.0f, 1.0f, 1.0f}; //Position Ersten drei Position in Koordinatensystem
-    glLightfv(GL_LIGHT0, GL_POSITION, &L2Position[3]); //welches licht, welche Eigenschaft, welchen Wert
-
-    //Diffuse
-    GLfloat LDiffuse[] = {0.8f, 0.8f, 0.8f, 1.0};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, LDiffuse);
 
 
+
+//    float PI = 3.14159f;
 
 
     float openingSlide180 = paramr * 1.8f;
     float openingSlide90 = paramr * 0.9f;
 
-    float x = paramb*3.6f;   // degree to rotate
-    float y = paramc*3.6f;   // degree to rotate
-    float z = paramd*3.6f;   // degree to rotate
+    float x = paramb*1.8f;   // degree to rotate
+    float y = paramc*1.8f;   // degree to rotate
+    float z = paramd*1.8f;   // degree to rotate
 
 
-
-
+    // Clear the scene
+    glClearColor(0.f, 0.f, 0.f, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
     glLoadIdentity();
+
     glScalef(0.5f,0.5f,0.5f);
 
     glRotatef(x, -1.0f, 0.0f, 0.0f); // Rotate by x degrees around x axis
     glRotatef(y, 0.0f, -1.0f, 0.0f); // Rotate by y degrees around y axis
     glRotatef(z, 0.0f, 0.0f, 1.0f); // Rotate by z degrees around z axis
 
+    //    // Change light position
+    //    float light_pos[] = { 10.f * cosf(parama*PI/180.f),
+    //                          5.f,
+    //                          10.f * sinf(parama*PI/180.f), 0.f };
+    //    glLightfv(GL_LIGHT0, GL_POSITION,  light_pos);
+
+    boden();
     glTranslatef(-1.0f,0,0);
 
     //Quadrat X-Y-Ebene
     einheitsquadrat();
 
-    // Quadrat Y-Z-Ebene
+
+
+    // Quadrat X-Z-Ebene    // Quadrat Y-Z-Ebene
     glRotatef(90.0f, 0, 1.0f,0); //Rotation um Y-Achse
     einheitsquadrat();
     glRotatef(90.0f, 0, -1.0f,0);
-
-    // Quadrat X-Z-Ebene
     glRotatef(90.0f, -1.0f, 0,0); //Rotation um X-Achse
     einheitsquadrat();
     glRotatef(90.0f, 1.0f, 0,0);
@@ -145,18 +169,31 @@ void OGLWidget::paintGL()
     glRotatef(90.0f, 1.0f, 0,0);
 
 
-    //        // Verschobenes Quadrat X-Y-Ebene
-    //        glTranslatef(0, 0, -1.0f);
-    //        einheitsquadrat();
-    //        glTranslatef(0, 0, 1.0f);
 
-    // Verschobenes Rechteck X-Y-Ebene Beginn
-    glTranslatef(0, 0, -1.0f);
+        // Verschobenes Rechteck X-Y-Ebene Beginn
+            glTranslatef(0, 0, -1.0f);
+            glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
+            glRotatef(openingSlide90, -1.0f, 0, 0);
+            glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
+            einheitsquadrat();
 
-    glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
-    glRotatef(openingSlide90, -1.0f, 0, 0);
-    glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
-    einheitsquadrat();
+
+//    // Verschobenes Rechteck X-Y-Ebene Beginn
+//    glTranslatef(0, 0, -1.0f);
+
+//    glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
+//    glRotatef(openingSlide90, -1.0f, 0, 0);
+//    glScalef(1.0f,0.25f,1.0f);
+//    glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
+//    einheitsquadrat();
+
+//    glTranslatef(0, 1.0f, 0);             // Punkt um den man rotieren will
+//    glRotatef(openingSlide180, 1.0f, 0, 0);
+//    einheitsquadrat();
+
+
+
+
 
 
     //    // Oberes Rechteck 1
@@ -206,52 +243,6 @@ void OGLWidget::paintGL()
     //    glEnd();
 
 
-
-    //    glPopMatrix();
-
-
-
-
-    //        // Vorderes Viereck
-    //        glBegin(GL_QUADS);
-    //        glVertex3f(-0.5, -0.5, -0.5);
-    //        glVertex3f(0.5, -0.5, -0.5);
-    //        glVertex3f( 0.5,  0.5, -0.5);
-    //        glVertex3f(-0.5, 0.5, -0.5);
-    //        glEnd();
-
-    //        // Linkes Viereck
-    //        glBegin(GL_QUADS);
-    //        glVertex3f(-0.5, -0.5, -0.5);
-    //        glVertex3f( -0.5, -0.5, 0.5);
-    //        glVertex3f( -0.5,  0.5, 0.5);
-    //        glVertex3f(-0.5, 0.5, -0.5);
-    //        glEnd();
-
-    //    //      glColor3f(1.0f, 0.0f, 1.0f);
-    //        // Rechtes Viereck
-    //        glBegin(GL_QUADS);
-    //        glVertex3f(0.5, -0.5, -0.5);
-    //        glVertex3f( 0.5, -0.5, 0.5);
-    //        glVertex3f( 0.5,  0.5, 0.5);
-    //        glVertex3f(0.5, 0.5, -0.5);
-    //        glEnd();
-
-    //        // Unteres Viereck
-    //        glBegin(GL_QUADS);
-    //        glVertex3f(0.5, -0.5, -0.5);
-    //        glVertex3f( -0.5, -0.5, -0.5);
-    //        glVertex3f( -0.5,  -0.5, 0.5);
-    //        glVertex3f(0.5, -0.5, 0.5);
-    //        glEnd();
-
-    //        // Hinteres Viereck
-    //        glBegin(GL_QUADS);
-    //        glVertex3f(-0.5, -0.5, 0.5);
-    //        glVertex3f( 0.5, -0.5, 0.5);
-    //        glVertex3f( 0.5,  0.5, 0.5);
-    //        glVertex3f(-0.5, 0.5, 0.5);
-    //        glEnd();
 
 
 
