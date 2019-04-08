@@ -68,6 +68,11 @@ void OGLWidget::initializeGL()
 
 }
 
+void OGLWidget::einheitsquadrat() {
+
+}
+
+
 void OGLWidget::paintGL()
 {
 

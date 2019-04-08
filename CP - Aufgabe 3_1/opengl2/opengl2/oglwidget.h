@@ -19,6 +19,7 @@ public slots:
     void setParamC( int newc );
     void setParamD( int newd );
     void setParamR( int newr );
+        void einheitsquadrat();
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
