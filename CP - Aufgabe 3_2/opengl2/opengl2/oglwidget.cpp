@@ -11,6 +11,7 @@ OGLWidget::OGLWidget(QWidget *parent)
     // Rotation value at the start
 
     paramr = 0;
+
 }
 
 OGLWidget::~OGLWidget()
@@ -68,48 +69,16 @@ void OGLWidget::initializeGL()
 
 }
 
-void OGLWidget::paintGL()
+
+void OGLWidget::zylinder()
 {
 
-//    GLfloat L2Position[4] = {1.0f, 1.0f, 1.0f, 1.0f}; //Position Ersten drei Position in Koordinatensystem
-//    glLightfv(GL_LIGHT0, GL_POSITION, &L2Position[3]); //welches licht, welche Eigenschaft, welchen Wert
-
-//    //Diffuse
-//    GLfloat LDiffuse[] = {0.6f, 0.6f, 0.6f, 1.0};
-//    glLightfv(GL_LIGHT0, GL_DIFFUSE, LDiffuse);
-
-
     float PI = 3.14159f;
-
-
     float i;
     float anzahl = 64;
     float rotationswinkel = 360/anzahl;
     float rotationswinkel_radian = 2*PI/anzahl;
-
     float s = parama+1; // change of size
-    float x = paramb*3.6f;   // degree to rotate
-    float y = paramc*3.6f;   // degree to rotate
-    float z = paramd*3.6f;   // degree to rotate
-    float t = paramr ;
-
-
-
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glLoadIdentity();
-    glScalef(0.01f,0.01f,0.01f);
-    glTranslatef(t,0,0);
-
-    glRotatef(x, -1.0f, 0.0f, 0.0f); // Rotate by x degrees around x axis
-    glRotatef(y, 0.0f, -1.0f, 0.0f); // Rotate by y degrees around y axis
-    glRotatef(z, 0.0f, 0.0f, 1.0f); // Rotate by z degrees around z axis
-
-
-
-
-
 
     for (i=0; i<anzahl; i++)
     {
@@ -150,6 +119,51 @@ void OGLWidget::paintGL()
 
 
     }
+}
+
+void OGLWidget::paintGL()
+{
+
+//    GLfloat L2Position[4] = {1.0f, 1.0f, 1.0f, 1.0f}; //Position Ersten drei Position in Koordinatensystem
+//    glLightfv(GL_LIGHT0, GL_POSITION, &L2Position[3]); //welches licht, welche Eigenschaft, welchen Wert
+
+//    //Diffuse
+//    GLfloat LDiffuse[] = {0.6f, 0.6f, 0.6f, 1.0};
+//    glLightfv(GL_LIGHT0, GL_DIFFUSE, LDiffuse);
+
+
+
+
+
+
+
+    float s = parama+1; // change of size
+    float x = paramb*3.6f;   // degree to rotate
+    float y = paramc*3.6f;   // degree to rotate
+    float z = paramd*3.6f;   // degree to rotate
+    float t = paramr ;
+
+
+
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glLoadIdentity();
+    glScalef(0.01f,0.01f,0.01f);
+    glTranslatef(t,0,0);
+
+    glRotatef(x, -1.0f, 0.0f, 0.0f); // Rotate by x degrees around x axis
+    glRotatef(y, 0.0f, -1.0f, 0.0f); // Rotate by y degrees around y axis
+    glRotatef(z, 0.0f, 0.0f, 1.0f); // Rotate by z degrees around z axis
+
+    zylinder();
+    glTranslatef(2*s,0,0);
+    zylinder();
+
+
+
+
+
 
 }
 
