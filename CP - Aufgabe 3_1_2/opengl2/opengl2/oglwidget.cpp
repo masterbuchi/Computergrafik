@@ -178,92 +178,43 @@ void OGLWidget::paintGL()
 //            einheitsquadrat();
 
 
-//    // Verschobenes Rechteck X-Y-Ebene Beginn
-//    glTranslatef(0, 0, -1.0f);
-
-
-//    glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
-//    glRotatef(openingSlide90, -1.0f, 0, 0);
-//    glScalef(1.0f,0.25f,1.0f);
-//    glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
-//    einheitsquadrat();
-
-//    glTranslatef(0, 1.0f, 0);             // Punkt um den man rotieren will
-//    glRotatef(openingSlide180, 1.0f, 0, 0);
-//    einheitsquadrat();
 
 
     // Verschobenes Rechteck X-Y-Ebene Beginn
     glTranslatef(0, 0, -1.0f);
 
     glPushMatrix();
-    glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
+
     glRotatef(openingSlide90, -1.0f, 0, 0);
     glScalef(1.0f,0.25f,1.0f);
-    glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
     einheitsquadrat();
-    glPopMatrix();
+    glScalef(1.0f,4.0f,1.0f);
+
+
 
     glPushMatrix();
-    glTranslatef(0.5f, 0.25f, 0);             // Punkt um den man rotieren will
+    glTranslatef(0, 0.25f, 0);             // Punkt um den man rotieren will
     glRotatef(openingSlide180, 1.0f, 0, 0);
     glScalef(1.0f,0.25f,1.0f);
-    glTranslatef(-0.5f, -0.25f, 0);          // Zurück an die eigentliche Stelle transformieren
     einheitsquadrat();
+    glScalef(1.0f,4.0f,1.0f);
+
+    glPushMatrix();
+    glTranslatef(0, 0.25f, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide180, -1.0f, 0, 0);
+    glScalef(1.0f,0.25f,1.0f);
+    einheitsquadrat();
+    glScalef(1.0f,4.0f,1.0f);
+
+    glPushMatrix();
+    glTranslatef(0, 0.25f, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide180, 1.0f, 0, 0);
+    glScalef(1.0f,0.25f,1.0f);
+    einheitsquadrat();
+    glScalef(1.0f,4.0f,1.0f);
     glPopMatrix();
-
-
-
-
-
-
-    //    // Oberes Rechteck 1
-    //    glBegin(GL_QUADS);
-    //    glColor3f(1.0f, 1.0f, 1.0f);
-    //    glVertex3f(0.5, 0.5, -0.5); // hinten rechts
-    //    glVertex3f( 0.25, 0.5, -0.5); // hinten links
-    //    glVertex3f( 0.25,  0.5, 0.5); // vorne links
-    //    glVertex3f(0.5, 0.5, 0.5); // vorne rechts
-    //    glEnd();
-
-    //    glTranslatef(0.25f, 0.5f, 0);             // Punkt um den man rotieren will
-    //    glRotatef(openingSlide180, 0, 0, 1.0f);
-    //    glTranslatef(-0.25f, -0.5f, 0);         // Zurück an die eigentliche Stelle transformieren
-
-    //    // Oberes Rechteck 2
-    //    glBegin(GL_QUADS);
-    //    glVertex3f(0.25, 0.5, -0.5); // hinten rechts
-    //    glVertex3f( 0, 0.5, -0.5); // hinten links
-    //    glVertex3f( 0,  0.5, 0.5); // vorne links
-    //    glVertex3f(0.25, 0.5, 0.5); // vorne rechts
-    //    glEnd();
-
-    //    glTranslatef(0, 0.5f, 0);             // Punkt um den man rotieren will
-    //    glRotatef(openingSlide180, 0, 0, -1.0f);
-    //    glTranslatef(0, -0.5f, 0);         // Zurück an die eigentliche Stelle transformieren
-
-
-    //    // Oberes Rechteck 3
-    //    glBegin(GL_QUADS);
-    //    glVertex3f(0, 0.5, -0.5); // hinten rechts
-    //    glVertex3f( -0.25, 0.5, -0.5); // hinten links
-    //    glVertex3f( -0.25,  0.5, 0.5); // vorne links
-    //    glVertex3f(0, 0.5, 0.5); // vorne rechts
-    //    glEnd();
-
-    //    glTranslatef(-0.25f, 0.5f, 0);             // Punkt um den man rotieren will
-    //    glRotatef(openingSlide180, 0, 0, 1.0f);
-    //    glTranslatef(0.25f, -0.5f, 0);         // Zurück an die eigentliche Stelle transformieren
-
-    //    // Oberes Rechteck 4
-    //    glBegin(GL_QUADS);
-    //    glVertex3f(-0.25, 0.5, -0.5); // hinten rechts
-    //    glVertex3f(-0.5, 0.5, -0.5); // hinten links
-    //    glVertex3f(-0.5,  0.5, 0.5); // vorne links
-    //    glVertex3f(-0.25, 0.5, 0.5); // vorne rechts
-    //    glEnd();
-
-
+    glPopMatrix();
+    glPopMatrix();
 
 
 
