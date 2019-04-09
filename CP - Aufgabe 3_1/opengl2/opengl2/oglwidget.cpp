@@ -63,11 +63,11 @@ void OGLWidget::initializeGL()
     // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Ambient);
     glEnable(GL_LIGHTING);
 
-    GLfloat L2Position[4] = {0.5f,0.5f,0.5f,0 }; //Position Ersten drei Position in Koordinatensystem
+    GLfloat L2Position[4] = {1.0f,1.0f,1.0f,0 }; //Position Ersten drei Position in Koordinatensystem
     glLightfv(GL_LIGHT0, GL_POSITION, &L2Position[3]); //welches licht, welche Eigenschaft, welchen Wert
 
     //Diffuse
-    GLfloat LDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0};
+    GLfloat LDiffuse[] = {0.2f, 0.2f, 0.2f, 1.0};
     glLightfv(GL_LIGHT0, GL_DIFFUSE, LDiffuse);
     glEnable(GL_LIGHT0);
 
@@ -170,16 +170,17 @@ void OGLWidget::paintGL()
 
 
 
-        // Verschobenes Rechteck X-Y-Ebene Beginn
-            glTranslatef(0, 0, -1.0f);
-            glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
-            glRotatef(openingSlide90, -1.0f, 0, 0);
-            glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
-            einheitsquadrat();
+//        // Verschobenes Rechteck X-Y-Ebene Beginn
+//            glTranslatef(0, 0, -1.0f);
+//            glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
+//            glRotatef(openingSlide90, -1.0f, 0, 0);
+//            glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
+//            einheitsquadrat();
 
 
 //    // Verschobenes Rechteck X-Y-Ebene Beginn
 //    glTranslatef(0, 0, -1.0f);
+
 
 //    glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
 //    glRotatef(openingSlide90, -1.0f, 0, 0);
@@ -190,6 +191,26 @@ void OGLWidget::paintGL()
 //    glTranslatef(0, 1.0f, 0);             // Punkt um den man rotieren will
 //    glRotatef(openingSlide180, 1.0f, 0, 0);
 //    einheitsquadrat();
+
+
+    // Verschobenes Rechteck X-Y-Ebene Beginn
+    glTranslatef(0, 0, -1.0f);
+
+    glPushMatrix();
+    glTranslatef(0.5f, 0, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide90, -1.0f, 0, 0);
+    glScalef(1.0f,0.25f,1.0f);
+    glTranslatef(-0.5f, 0, 0);          // Zurück an die eigentliche Stelle transformieren
+    einheitsquadrat();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.5f, 0.25f, 0);             // Punkt um den man rotieren will
+    glRotatef(openingSlide180, 1.0f, 0, 0);
+    glScalef(1.0f,0.25f,1.0f);
+    glTranslatef(-0.5f, -0.25f, 0);          // Zurück an die eigentliche Stelle transformieren
+    einheitsquadrat();
+    glPopMatrix();
 
 
 
