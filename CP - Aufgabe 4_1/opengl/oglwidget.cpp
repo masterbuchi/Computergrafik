@@ -141,7 +141,8 @@ void OGLWidget::testFunktion(float a,float b, float c) {
         k = sin(i);
         u = cos(i);
         for (int j = begin; j < end; j++){
-            float z = sin(a* i *dx + b*j*dx + c);
+//            float z = sin(a* i *dx + b*j*dx + c);
+            float z = cos(abs(a*i*dx)+abs(b*j*dx))*(abs(a*i*dx)+abs(b*j*dx));
             glColor3f( abs(z), abs(z), abs(z) );
 
             glVertex3f (i*dx, j*dx, z);
@@ -228,10 +229,9 @@ void OGLWidget::paintGL()
     //    glColor3f( 1.0f, 0.0f, 0.0f );
     //    drawSphere(QVector3D( 5, 0, 0), 2);
 
-    glColor3f( 1.0f, 1.0f, 0.0f );
-    drawSphere(QVector3D(-5, 0, 0), 2);
+//    glColor3f( 1.0f, 1.0f, 0.0f );
+//    drawSphere(QVector3D(-5, 0, 0), 2);
 
-    QTextStream(stdout) << varA << endl;
     testFunktion(varA,varB,varC);
 
 
