@@ -14,15 +14,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->zoom, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setZoom(int)));
     connect(ui->light, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setLight(int)));
 
+    connect(ui->rotateX, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setCubeRotX(int)));
+    connect(ui->rotateY, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setCubeRotY(int)));
+    connect(ui->rotateZ, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setCubeRotZ(int)));
+    connect(ui->sizeCube, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setCubeSize(int)));
 
-    connect(ui->dialA, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setVarA(int)));
-    connect(ui->dialB, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setVarB(int)));
-    connect(ui->dialC, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setVarC(int)));
-    connect(ui->dialDelta, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setVarDelta(int)));
 
     // Handle any rotation change requests from mouse dragging and key presses
     connect( ui->glwidget, SIGNAL(changeRotation(int,int,int)), this, SLOT(onChangeRotation(int,int,int)));
+
 }
+
+
 
 MainWindow::~MainWindow()
 {
@@ -44,4 +47,5 @@ void MainWindow::onChangeRotation(int dx, int dy, int dz)
 
     // NB: SetValue will emit valueChanged signal, so the scene gets updated
 }
+
 

@@ -9,12 +9,18 @@ OGLWidget::OGLWidget(QWidget *parent)
     rotx  = 0;
     roty  = 0;
     rotz  = 0;
-    varA = 1;
-    varB = 1;
-    varC = 1;
-    varDelta = 0.1f;
+    cubeRotX = 0;
+    cubeRotY = 0;
+    cubeRotZ = 0;
+
+    cubeSize = 1.0f;
+
+
+    placeX = 0;
+    placeY = 0;
     zoom  = 100;
     PI = 3.14159f;
+    wuerfel = false;
 }
 
 OGLWidget::~OGLWidget()
@@ -40,6 +46,32 @@ void OGLWidget::setRotZ(int newrz)
     update();
 }
 
+
+void OGLWidget::setCubeRotX(int newrx)
+{
+    cubeRotX = newrx*3.6f;
+    update();
+}
+
+void OGLWidget::setCubeRotY(int newry)
+{
+    cubeRotY = newry*3.6f;
+    update();
+}
+
+void OGLWidget::setCubeRotZ(int newrz)
+{
+    cubeRotZ = newrz*3.6f;
+    update();
+}
+
+
+void OGLWidget::setCubeSize(int newrz)
+{
+    cubeSize = newrz*3.6f/10;
+    update();
+}
+
 void OGLWidget::setZoom(int newzoom)
 {
     zoom = newzoom;
@@ -52,28 +84,28 @@ void OGLWidget::setLight(int newlight)
     update();
 }
 
-void OGLWidget::setVarA(int newA)
+void OGLWidget::setPlaceX(int newPlaceX)
 {
-    varA = 10.0f/newA;
+    if (newPlaceX == 0)
+        placeX = 0;
+    else {
+
+        if((placeX <=20) && (placeX >=-20))
+            placeX = placeX + newPlaceX/10.0f;
+    }
     update();
 }
 
-void OGLWidget::setVarB(int newB)
+void OGLWidget::setPlaceY(int newPlaceY)
 {
-    varB = 10.0f/newB;
-    update();
-}
 
-void OGLWidget::setVarC(int newC)
-{
-    varC = newC;
-    update();
-}
-
-void OGLWidget::setVarDelta(int newDelta)
-{
-    varDelta = (0.1f) / (0.1f *newDelta);
-    update();
+    if (newPlaceY == 0)
+        placeY = 0;
+    else {
+        if ((placeY <=20) && (placeY >=-20))
+            placeY = placeY + newPlaceY/10.0f;
+        update();
+    }
 }
 
 
@@ -112,48 +144,75 @@ void OGLWidget::drawSphere( const QVector3D& pos, float rad,
 }
 
 
+void OGLWidget::EinheitsQuadrat() {
+    glBegin(GL_QUADS);
+    glColor3f(100.0f, 100.0f,0);
+    glNormal3f(0,0,1);
+    glVertex3f(0,0,0); // hinten rechts
+    glVertex3f(cubeSize,0,0); // hinten links
+    glVertex3f(cubeSize,cubeSize,0); // vorne links
+    glVertex3f(0,cubeSize,0); // vorne rechts
+    glEnd();
+}
+
+
+void OGLWidget::bodenFlaeche() {
+    glBegin(GL_QUADS);
+    glColor3f(10.0f, 10.0f,10.0f);
+    glVertex3f(-20.f,-20.f,0);
+    glVertex3f(-20.f,20.f,0);
+    glVertex3f(20.f,20.f,0);
+    glVertex3f(20.f,-20.f,0);
+    glEnd();
+}
+
+void OGLWidget::EinheitsWuerfel() {
+
+    glColor3f( 1.0f, 1.0f, 0.0f );
+    glTranslatef(placeX,placeY,0);
+
+    glRotatef(cubeRotX,1.0f,0,0);
+    glRotatef(cubeRotY,0,1.0f,0);
+    glRotatef(cubeRotZ,0,0,1.0f);
+
+
+    glPushMatrix();
+
+    glRotatef(180.0f,1.0f,0,0);
+    //Quadrat X-Y-Ebene
+    EinheitsQuadrat();
+
+    // Quadrat X-Z-Ebene
+    glRotatef(90.0f, 0, 1.0f,0);
+    EinheitsQuadrat();
+    glRotatef(90.0f, 0, -1.0f,0);
+    glRotatef(90.0f, -1.0f, 0,0);
+    EinheitsQuadrat();
+    glRotatef(90.0f, 1.0f, 0,0);
+
+    // Verschobenes Quadrat Y-Z-Ebene
+    glRotatef(90.0f, 0, 1.0f,0);
+    glTranslatef(0, 0, cubeSize);
+    EinheitsQuadrat();
+    glTranslatef(0, 0, -cubeSize);
+    glRotatef(90.0f, 0, -1.0f,0);
+
+    // Verschobenes Quadrat X-Z-Ebene
+    glRotatef(90.0f, -1.0f, 0,0);
+    glTranslatef(0, 0, cubeSize);
+    EinheitsQuadrat();
+    glTranslatef(0, 0, -cubeSize);
+    glRotatef(90.0f, 1.0f, 0,0);
+
+    // Verschobenes Rechteck X-Y-Ebene Beginn
+    glTranslatef(0, 0, -cubeSize);
+    // Zurück an die eigentliche Stelle transformieren
+    EinheitsQuadrat();
+    glTranslatef(0, 0, cubeSize);
 
 
 
-void OGLWidget::testFunktion(float a,float b, float c) {
-
-    float dx;
-    float dy;
-    float k;
-    float u;
-
-    dx = varDelta;
-    dy = dx;
-
-    int size = 40 / dx;
-
-
-    int begin = 0-size/2;
-
-    int end = 0+size/2;
-
-
-    glBegin (GL_POINTS);
-
-
-    for (int i = begin; i < end; i++)
-    {
-        k = sin(i);
-        u = cos(i);
-        for (int j = begin; j < end; j++){
-            float z = sin(a* i *dx + b*j*dx + c);
-            glColor3f( abs(z), abs(z), abs(z) );
-
-            glVertex3f (i*dx, j*dx, z);
-        }
-    }
-
-    glEnd ();
-
-
-
-
-
+    glPopMatrix();
 }
 
 
@@ -224,28 +283,16 @@ void OGLWidget::paintGL()
                           10.f * sinf(light*PI/180.f), 0.f };
     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
-    //    // Draw three spheres and a triangle
-    //    glColor3f( 1.0f, 0.0f, 0.0f );
-    //    drawSphere(QVector3D( 5, 0, 0), 2);
 
-    glColor3f( 1.0f, 1.0f, 0.0f );
-    drawSphere(QVector3D(-5, 0, 0), 2);
+//    glColor3f( 1.0f, 1.0f, 0.0f );
+//    drawSphere(QVector3D(-5, 0, 0), 2);
 
-    QTextStream(stdout) << varA << endl;
-    testFunktion(varA,varB,varC);
+    bodenFlaeche();
 
 
-    //    glColor3f( 0.0f, 0.0f, 1.0f );
-    //    drawSphere(QVector3D( 0, 5, 0), 2);
-
-    //    glColor3f( 0.0f, 1.0f, 0.0f );
-
-    //    glBegin(GL_TRIANGLES);
-    //    glNormal3f( 0.0,  0.0, 1.0);
-    //    glVertex3f( 0.0,  2.0, 0.0);
-    //    glVertex3f(-2.0, -2.0, 0.0);
-    //    glVertex3f( 2.0, -2.0, 0.0);
-    //    glEnd();
+    if(wuerfel) {
+        EinheitsWuerfel();
+    }
 
 }
 
@@ -284,24 +331,24 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
 void OGLWidget::keyPressEvent(QKeyEvent *event)
 {
     // This is the delta we want to use for rotating
-    const int keyDelta = 10;
+    const int keyDelta = 1;
 
     switch(event->key())
     {
     // Up/Down: Rotating around x axis
     case Qt::Key_Up:
-        emit changeRotation( keyDelta, 0, 0 );
+        setPlaceY(keyDelta);
         break;
     case Qt::Key_Down:
-        emit changeRotation( -keyDelta, 0, 0 );
+        setPlaceY(-keyDelta);
         break;
 
         // Left/Right: Rotating around y axis
     case Qt::Key_Left:
-        emit changeRotation( 0, keyDelta, 0 );
+        setPlaceX(-keyDelta);
         break;
     case Qt::Key_Right:
-        emit changeRotation( 0, -keyDelta, 0 );
+        setPlaceX(keyDelta);
         break;
 
         // Pg up/down: Rotating around z axis
@@ -311,7 +358,14 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_PageDown:
         emit changeRotation( 0, 0, -keyDelta );
         break;
-
+    case Qt::Key_Insert:
+        wuerfel = true;
+        setPlaceX(0);
+        setPlaceX(0);
+        update();
+        break;
+    case Qt:: Key_Delete:
+        exit(0);
         // All other will be ignored
     default:
         break;
