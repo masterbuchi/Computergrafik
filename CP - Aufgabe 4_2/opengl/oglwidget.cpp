@@ -169,8 +169,8 @@ void OGLWidget::bodenFlaeche() {
 void OGLWidget::EinheitsWuerfel() {
 
     glColor3f( 1.0f, 1.0f, 0.0f );
-    glTranslatef(placeX,placeY,0);
-
+    glTranslatef(placeX,placeY,0.01f);
+    glPushMatrix();
     glRotatef(cubeRotX,1.0f,0,0);
     glRotatef(cubeRotY,0,1.0f,0);
     glRotatef(cubeRotZ,0,0,1.0f);
@@ -211,7 +211,7 @@ void OGLWidget::EinheitsWuerfel() {
     glTranslatef(0, 0, cubeSize);
 
 
-
+    glPopMatrix();
     glPopMatrix();
 }
 
@@ -284,8 +284,8 @@ void OGLWidget::paintGL()
     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
 
-//    glColor3f( 1.0f, 1.0f, 0.0f );
-//    drawSphere(QVector3D(-5, 0, 0), 2);
+    //    glColor3f( 1.0f, 1.0f, 0.0f );
+    //    drawSphere(QVector3D(-5, 0, 0), 2);
 
     bodenFlaeche();
 
@@ -361,7 +361,11 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Insert:
         wuerfel = true;
         setPlaceX(0);
-        setPlaceX(0);
+        setPlaceY(0);
+        setCubeRotX(0);
+        setCubeRotY(0);
+        setCubeRotZ(0);
+        setCubeSize(1.0f);
         update();
         break;
     case Qt:: Key_Delete:
