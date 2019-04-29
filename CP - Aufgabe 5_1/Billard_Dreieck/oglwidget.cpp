@@ -95,33 +95,39 @@ void OGLWidget::paintGL()
     glScaled( scale, scale, scale ); // Scale along all axis
     //SetMaterialColor(0,0,0,1);
 
+    double size = 5;
+
     glPushMatrix();
-    glScaled(5,2,5);
+    glScaled(size,2,size);
     Tisch(1.0);
     glPopMatrix();
+
+
 
     dt=unfold/200;
     px+=dx*dt;
     pz+=dz*dt;
 
     glPushMatrix();
+    glRotated(winkel,0,1,0);
+
     glTranslated(px,1,pz);
 
 
-    //    if (px+1.0>4.9 or px-1.0<-4.9)
-    //    {
-    //        glRotated(180.0,1,0,0);
-    //    }
 
-    //    if (pz+1>4.9 or pz-1<-4.9)  {
-    //        glRotated(180.0,1,0,0);
-    //    }
+    if (px+1.0>size or px-1.0<-size)
+    {
+        winkel = 90;
+        dx =-dx;
+    }
+
+
+    if (pz+1>size or pz-1<-size)  {
+        //glRotated(180.0,1,0,0);
+        dz =-dz;
+    }
 
     Kugel();
-    if (pz+1>4.9 or pz-1<-4.9) dz =-dz;
-    if (px+1.0>4.9 or px-1.0<-4.9) dx =-dx;
-
-
 
     glPopMatrix();
     glPopMatrix();
@@ -243,18 +249,18 @@ void OGLWidget::Kugel()
             glEnd();
         }
 }
-void OGLWidget::Tisch(double size)
+void OGLWidget::Tisch(double r)
 {
-    double height = ((2*size)/2) * sqrt(3);
+    double a = sqrt(3)* r;
 
     //Boden
     glBegin(GL_TRIANGLES);
     glNormal3f(0,-1,0);
     glColor3d(0.0,0.0,1.0);
 
-    glVertex3d(-size,0,-size);
-    glVertex3d(0,0,-size+height);
-    glVertex3d(+size,0,-size);
+    glVertex3d(-a,0,-r);
+    glVertex3d(0,0,2*r);
+    glVertex3d(+a,0,-r);
 
     glEnd();
 
@@ -263,30 +269,30 @@ void OGLWidget::Tisch(double size)
     glBegin(GL_QUADS);
     glNormal3f(0,0,-1);
     glColor3d(1.0,1.0,0.0);
-    glVertex3d(-size,0,-size);
-    glVertex3d(-size,1.0,-size);
-    glVertex3d(size,1.0,-size);
-    glVertex3d(size,0,-size);
+    glVertex3d(-a,0,-r);
+    glVertex3d(-a,1.0,-r);
+    glVertex3d(a,1.0,-r);
+    glVertex3d(a,0,-r);
     glEnd();
 
     // Rechte Wand
     glBegin(GL_QUADS);
     glNormal3f(1,0,0);
     glColor3d(1.0,0.0,1.0);
-    glVertex3f(1.0,0,-1.0);
-    glVertex3f(1.0,1.0,-1.0);
-    glVertex3f(1.0,1.0,1.0);
-    glVertex3f(1.0,0,1.0);
+    glVertex3d(a,0,-r);
+    glVertex3d(a,1.0,-r);
+    glVertex3d(0,1.0,2*r);
+    glVertex3d(0,0,2*r);
     glEnd();
 
     // Linke Wand
     glBegin(GL_QUADS);
     glNormal3f(-1,0,0);
     glColor3d(0.0,1.0,0.0);
-    glVertex3f(-1.0,0,-1.0);
-    glVertex3f(-1.0,1.0,-1.0);
-    glVertex3f(-1.0,1.0,1.0);
-    glVertex3f(-1.0,0,1.0);
+    glVertex3d(-a,0,-r);
+    glVertex3d(-a,1.0,-r);
+    glVertex3d(0,1.0,2*r);
+    glVertex3d(0,0,2*r);
     glEnd();
 
 
@@ -304,12 +310,12 @@ void OGLWidget::Tisch(double size)
 
 
     // Vordere Wand
-//    glBegin(GL_QUADS);
-//    glNormal3f(0,0,1);
-//    glColor3d(1.0,1.0,1.0);
-//    glVertex3f(-1.0,0,1.0);
-//    glVertex3f(-1.0,1.0,1.0);
-//    glVertex3f(1.0,1.0,1.0);
-//    glVertex3f(1.0,0,1.0);
-//    glEnd();
+    //    glBegin(GL_QUADS);
+    //    glNormal3f(0,0,1);
+    //    glColor3d(1.0,1.0,1.0);
+    //    glVertex3f(-1.0,0,1.0);
+    //    glVertex3f(-1.0,1.0,1.0);
+    //    glVertex3f(1.0,1.0,1.0);
+    //    glVertex3f(1.0,0,1.0);
+    //    glEnd();
 }

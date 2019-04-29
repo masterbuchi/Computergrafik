@@ -65,6 +65,8 @@ protected:
     double pz=0.0;
     int dz=2;
 
+    double winkel = 0.0;
+
     int rotx=0;       // Rotation angles (0..360)
     int roty=0;
     int rotz=0;
