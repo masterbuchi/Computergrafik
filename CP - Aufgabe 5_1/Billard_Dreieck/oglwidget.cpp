@@ -76,15 +76,6 @@ void OGLWidget::initializeGL()
 
 }
 
-//double OGLWidget:: AbstandPunktGerade(A,B,C,P) {
-
-//    a = [A,B];
-//            lamda = (C - dot(a,P))/(dot(a,a));
-//            L = lamda * a + P;
-
-//            ergebnis = sqrt((P(1) - L(1))^2 + (P(2) - L(2))^2);
-//            return ergebnis;
-//}
 
 void OGLWidget::paintGL()
 {
@@ -105,10 +96,10 @@ void OGLWidget::paintGL()
     glScalef( scale, scale, scale ); // Scale along all axis
     //SetMaterialColor(0,0,0,1);
 
-    float size = 5.0f;
+    // float size = 5.0f;
 
     glPushMatrix();
-    glScalef(size,2.0f,size);
+   // glScalef(size,2.0f,size);
     //    glRotatef(45, 0.0f, 1.0f, 0.0f); // Rotate around y axis
     Tisch();
     glPopMatrix();
@@ -122,15 +113,24 @@ void OGLWidget::paintGL()
     glPushMatrix();
     glTranslatef(px,1,pz);
 
-    if (px+1.0f>size or px-1.0f<-size)
+
+    for (int i=0; i<Ecken; i++)
     {
-        dx =-dx;
+        Kollision(i);
+
     }
 
-    if (pz+1>size or pz-1<-size)  {
-        //glRotated(180.0,1,0,0);
-        dz =-dz;
-    }
+
+
+    //    if (px+1.0f>size or px-1.0f<-size)
+    //    {
+    //        dx =-dx;
+    //    }
+
+    //    if (pz+1>size or pz-1<-size)  {
+    //        //glRotated(180.0,1,0,0);
+    //        dz =-dz;
+    //    }
 
     Kugel();
 
@@ -139,15 +139,60 @@ void OGLWidget::paintGL()
 
 }
 
+void OGLWidget::Kugel()
+{
+    int n=10; // Anzahl der 1.0ngrade
+    int m=20; // Anzahl der Längengrade
+    double dalpha=2.0*M_PI/m;
+    double dbeta=M_PI/n/2.0;
+    int k=0,j=0;
+    double x1,x2,y1,y2,z1,z2=0;
+    double x3,x4,y3,y4,z3,z4=0;
 
+    for(j=0;j < n ;j+=1)
+        for(k=0;k < m ;k+=1)
+        {
+            x1=cos(j*dbeta)*cos(k*dalpha);
+            y1=sin(j*dbeta);
+            z1=-cos(j*dbeta)*sin(k*dalpha);
+            x2=cos((j+1)*dbeta)*cos(k*dalpha);
+            y2=sin((j+1)*dbeta);
+            z2=-cos((j+1)*dbeta)*sin(k*dalpha);
+            x3=cos((j+1)*dbeta)*cos((k+1)*dalpha);
+            y3=sin((j+1)*dbeta);
+            z3=-cos((j+1)*dbeta)*sin((k+1)*dalpha);
+            x4=cos(j*dbeta)*cos((k+1)*dalpha);
+            y4=sin(j*dbeta);
+            z4=-cos(j*dbeta)*sin((k+1)*dalpha);
+            glBegin(GL_QUADS);
+            glNormal3d(-x1,-y1,-z1);
+            glColor3d(1.0,0.0,1.0);
+            glVertex3d(x1,y1,z1);
+            //          glColor3f(0.0,0.0,1.0);
+            glVertex3d(x2,y2,z2);
+            //          glColor3f(0.0,0.0,1.0);
+            glVertex3d(x3,y3,z3);
+            //          glColor3f(0.0,0.0,1.0);
+            glVertex3d(x4,y4,z4);
+            glEnd();
+            glBegin(GL_QUADS);
+            glNormal3d(-x1,-y1,-z1);
+            //          glColor3f(0.0,0.0,1.0);
+            glVertex3d(x1,-y1,z1);
+            //          glColor3f(0.0,0.0,1.0);
+            glVertex3d(x2,-y2,z2);
+            //          glColor3f(0.0,0.0,1.0);
+            glVertex3d(x3,-y3,z3);
+            //          glColor3f(0.0,0.0,1.0);
+            glVertex3d(x4,-y4,z4);
+            glEnd();
+        }
+}
 
 
 void OGLWidget::Tisch() {
 
-    // Winkel in Radian
-    double rotationswinkel_radian = 2.0*3.14159/Ecken;
-    // Größe des Feldes
-    double s = 2; // change of size
+
 
     for (int i=0; i<Ecken; i++)
     {
@@ -161,28 +206,64 @@ void OGLWidget::Tisch() {
         //Mittelpunkt
         glVertex3d(0, 0, 0);
         //Punkt Außen auf Z nach Vorne
-        glVertex3d(s * -sin(i*rotationswinkel_radian), 0 , s * cos(i*rotationswinkel_radian));
+        glVertex3d(s * -sin(i*rot_rad), 0 , s * cos(i*rot_rad));
         //Rotationspunkt
-        glVertex3d(s * -sin((i+1)*rotationswinkel_radian), 0 , s * cos((i+1)*rotationswinkel_radian));
+        glVertex3d(s * -sin((i+1)*rot_rad), 0 , s * cos((i+1)*rot_rad));
         glEnd();
 
         // Mantelstück
         glBegin(GL_QUADS);
         glColor3d(255.0, 0.0, 255.0);
         // Unten Links
-        glVertex3d(s * -sin(i*rotationswinkel_radian), 0, s * cos(i*rotationswinkel_radian));
+        glVertex3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
         // Unten Rechts
-        glVertex3d(s * -sin((i+1)*rotationswinkel_radian),0,  s * cos((i+1)*rotationswinkel_radian) );
+        glVertex3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad) );
         // Oben Rechts
-        glVertex3d(s * -sin((i+1)*rotationswinkel_radian),1 , s * cos((i+1)*rotationswinkel_radian) );
+        glVertex3d(s * -sin((i+1)*rot_rad),1 , s * cos((i+1)*rot_rad) );
         // Oben Links
-        glVertex3d(s * -sin(i*rotationswinkel_radian), 1, s * cos(i*rotationswinkel_radian));
+        glVertex3d(s * -sin(i*rot_rad), 1, s * cos(i*rot_rad));
         glEnd();
 
     }
 
 }
 
+void OGLWidget::Schnittpunkt(int i) {
+
+
+
+       // s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * dx;
+       // s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) = pz + lam2 * dz;
+
+    double lam = -(px + s*sin(i*rot_rad) - (dx*(pz - s*cos(i*rot_rad)))/dz)/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)) - (dx*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz);
+    double lam2 = (s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) -pz) / dz;
+
+    sx = px + lam2  * dx;
+    sz = pz + lam2 * dz;
+
+
+
+}
+
+
+void OGLWidget::Kollision(int i) {
+
+    Schnittpunkt(i);
+
+    double fx = sx;
+    double fz = sz;
+
+    double x_2 = pow((px-sx),2);
+    double z_2 = pow((pz-sz),2);
+
+    double abstand = sqrt(x_2 + z_2);
+
+    if (abstand<1) {
+        dz = -dz;
+        dx = -dx;
+    }
+
+}
 
 void OGLWidget::mousePressEvent(QMouseEvent *event)
 {
@@ -242,53 +323,5 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
 }
-void OGLWidget::Kugel()
-{
-    int n=10; // Anzahl der 1.0ngrade
-    int m=20; // Anzahl der Längengrade
-    double dalpha=2.0*M_PI/m;
-    double dbeta=M_PI/n/2.0;
-    int k=0,j=0;
-    double x1,x2,y1,y2,z1,z2=0;
-    double x3,x4,y3,y4,z3,z4=0;
 
-    for(j=0;j < n ;j+=1)
-        for(k=0;k < m ;k+=1)
-        {
-            x1=cos(j*dbeta)*cos(k*dalpha);
-            y1=sin(j*dbeta);
-            z1=-cos(j*dbeta)*sin(k*dalpha);
-            x2=cos((j+1)*dbeta)*cos(k*dalpha);
-            y2=sin((j+1)*dbeta);
-            z2=-cos((j+1)*dbeta)*sin(k*dalpha);
-            x3=cos((j+1)*dbeta)*cos((k+1)*dalpha);
-            y3=sin((j+1)*dbeta);
-            z3=-cos((j+1)*dbeta)*sin((k+1)*dalpha);
-            x4=cos(j*dbeta)*cos((k+1)*dalpha);
-            y4=sin(j*dbeta);
-            z4=-cos(j*dbeta)*sin((k+1)*dalpha);
-            glBegin(GL_QUADS);
-            glNormal3d(-x1,-y1,-z1);
-            glColor3d(1.0,0.0,1.0);
-            glVertex3d(x1,y1,z1);
-            //          glColor3f(0.0,0.0,1.0);
-            glVertex3d(x2,y2,z2);
-            //          glColor3f(0.0,0.0,1.0);
-            glVertex3d(x3,y3,z3);
-            //          glColor3f(0.0,0.0,1.0);
-            glVertex3d(x4,y4,z4);
-            glEnd();
-            glBegin(GL_QUADS);
-            glNormal3d(-x1,-y1,-z1);
-            //          glColor3f(0.0,0.0,1.0);
-            glVertex3d(x1,-y1,z1);
-            //          glColor3f(0.0,0.0,1.0);
-            glVertex3d(x2,-y2,z2);
-            //          glColor3f(0.0,0.0,1.0);
-            glVertex3d(x3,-y3,z3);
-            //          glColor3f(0.0,0.0,1.0);
-            glVertex3d(x4,-y4,z4);
-            glEnd();
-        }
-}
 
