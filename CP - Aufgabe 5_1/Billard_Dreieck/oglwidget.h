@@ -52,27 +52,30 @@ protected:
     QTimer* animtimer; // Timer needed to step animation every x msec
     int animstep;      // Current animation step (used to rotate triangle
     void Kugel();
-    void Tisch(double size);
+    void Tisch();
     void SetMaterialColor(int side, double r, double g, double b);
 
 protected:
     float c;
-    double dt;
-    double px=0.0;
+    float dt;
+    float px=0.0f;
     int dx=1;
-    double py=0.0;
+    float py=0.0f;
     int dy=1;
-    double pz=0.0;
+    float pz=0.0f;
     int dz=2;
 
-    double winkel = 0.0;
+
+    // Anzahl der Ecken;
+    double Ecken=180.0;
+    double EckenArray[9][2];
 
     int rotx=0;       // Rotation angles (0..360)
     int roty=0;
     int rotz=0;
     int zoom;       // Zoom factor (0..200, 100 for 1:1)
 //    float M_PI;
-    double unfold;     // Unfolding position (0..100, 0 closed)
+    float unfold;     // Unfolding position (0..100, 0 closed)
     QPoint lastpos; // Last position of mouse pressed, used for dragging
 };
 

@@ -97,7 +97,7 @@ void OGLWidget::paintGL()
     glScalef( scale, scale, scale ); // Scale along all axis
     glPushMatrix();
     glScalef(5.0f,2.0f,5.0f);
-    glRotatef(0, 0.0f, 1.0f, 0.0f); // Rotate around y axis
+    glRotatef(45, 0.0f, 1.0f, 0.0f); // Rotate around y axis
     Tisch();
     glPopMatrix();
     dt=unfold/200.0f;
@@ -317,7 +317,7 @@ void OGLWidget::collide(float ax, float ay, float bx, float by, float cx, float 
     float n= ay-(m*ax);//Y-Achsen Abschnitt
 
 
-    float d=abs(((m*cx)-(cy+n))/sqrtf(powf(m,2)+2));//Abstand zwischen Ball und Lotpunkt
+    float d=abs(((m*cx)-(cy+n))/sqrtf(powf(m,2)+1));//Abstand zwischen Ball und Lotpunkt
 
 
     //Abstand zwischen Schnittpunkt und Ball aber nicht messbarer abstand sondern sozusagen lambda in vektorformel
@@ -325,20 +325,17 @@ void OGLWidget::collide(float ax, float ay, float bx, float by, float cx, float 
 
     float abstand2 = ((px-ax)*(bx-ax)+((py-ay)*(by-ay)))/(((bx-ax)*(bx-ax))+((by-ay)*(by-ay)));
 
-        float spx=cx+abstand*dx;//Schnittpunkt von Ball und Gerade X Koordinate
-        float spy=cy+abstand*dz;//Schnittpunkt von Ball und Gerade Y Koordinate
+    float spx=cx+abstand*dx;//Schnittpunkt von Ball und Gerade X Koordinate
+    float spy=cy+abstand*dz;//Schnittpunkt von Ball und Gerade Y Koordinate
+
+    float lotx=ax+abstand2*(by-ay); //Gespiegelter Punkt, berechnet durch Lotpunkt(x und y koordinaten müssen getauscht und der untere negativ sein)
+    float loty=ay+abstand2*(bx-ax);
 
 
-
-          float lotx=ax+abstand2*(by-ay); //Gespiegelter Punkt, berechnet durch Lotpunkt(x und y koordinaten müssen getauscht und der untere negativ sein)
-          float loty=ay+abstand2*(bx-ax);
-//        float px=cx+(2*abstand2*(by)); //Gespiegelter Punkt, berechnet durch Lotpunkt(x und y koordinaten müssen getauscht und der untere negativ sein)
-//        float py=cy+(2*abstand2*(-bx));
-
-                //neuberechnung von dx und dz(ja, dz weil oben drauf geschaut wird und die variablen vorher schon gesetzt wurden). Es wird der Schnittpunkt
-                //von X und Y - der gespiegelte Punkt berechnet und als neuer Richtungsvektor gesetzt.
-        float lotx_neu=px+(2*(lotx));
-        float loty_neu=py+(2*(loty));
+    //neuberechnung von dx und dz(ja, dz weil oben drauf geschaut wird und die variablen vorher schon gesetzt wurden). Es wird der Schnittpunkt
+    //von X und Y - der gespiegelte Punkt berechnet und als neuer Richtungsvektor gesetzt.
+    float lotx_neu=px+(2*(lotx));
+    float loty_neu=py+(2*(loty));
 
 
 
@@ -351,11 +348,12 @@ void OGLWidget::collide(float ax, float ay, float bx, float by, float cx, float 
         dz=loty_neu-spy;
 
         //Sorgt dafür, dass die Geschwindigkeit immer gleich bleibt
-        float v= sqrt((dx*dx)+(dz*dz));
+        float v= sqrt(pow(dx,2)+pow(dz,2));
         dx=dx/v;
         dz=dz/v;
 
-
+        px+=2*dx*dt;
+        pz+=2*dz*dt;
 
     }
 
