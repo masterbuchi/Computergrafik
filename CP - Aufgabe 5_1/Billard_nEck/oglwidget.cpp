@@ -92,26 +92,23 @@ void OGLWidget::paintGL()
     glRotatef(rotz, 0.0f, 0.0f, 1.0f); // Rotate around z axis
 
     //Apply scaling
-    float scale = zoom/100.0f;
-    glScalef( scale, scale, scale ); // Scale along all axis
-    //SetMaterialColor(0,0,0,1);
-
-    // float size = 5.0f;
+    double scale = zoom/100.0;
+    glScaled( scale, scale, scale ); // Scale along all axis
 
     glPushMatrix();
-   // glScalef(size,2.0f,size);
-    //    glRotatef(45, 0.0f, 1.0f, 0.0f); // Rotate around y axis
     Tisch();
     glPopMatrix();
 
 
 
     dt=unfold/200;
+
+
     px+=dx*dt;
     pz+=dz*dt;
 
     glPushMatrix();
-    glTranslatef(px,1,pz);
+    glTranslated(px,1,pz);
 
 
     for (int i=0; i<Ecken; i++)
@@ -120,17 +117,6 @@ void OGLWidget::paintGL()
 
     }
 
-
-
-    //    if (px+1.0f>size or px-1.0f<-size)
-    //    {
-    //        dx =-dx;
-    //    }
-
-    //    if (pz+1>size or pz-1<-size)  {
-    //        //glRotated(180.0,1,0,0);
-    //        dz =-dz;
-    //    }
 
     Kugel();
 
@@ -141,8 +127,8 @@ void OGLWidget::paintGL()
 
 void OGLWidget::Kugel()
 {
-    int n=10; // Anzahl der 1.0ngrade
-    int m=20; // Anzahl der Längengrade
+    int n=10;
+    int m=20;
     double dalpha=2.0*M_PI/m;
     double dbeta=M_PI/n/2.0;
     int k=0,j=0;
@@ -168,22 +154,15 @@ void OGLWidget::Kugel()
             glNormal3d(-x1,-y1,-z1);
             glColor3d(1.0,0.0,1.0);
             glVertex3d(x1,y1,z1);
-            //          glColor3f(0.0,0.0,1.0);
             glVertex3d(x2,y2,z2);
-            //          glColor3f(0.0,0.0,1.0);
             glVertex3d(x3,y3,z3);
-            //          glColor3f(0.0,0.0,1.0);
             glVertex3d(x4,y4,z4);
             glEnd();
             glBegin(GL_QUADS);
             glNormal3d(-x1,-y1,-z1);
-            //          glColor3f(0.0,0.0,1.0);
             glVertex3d(x1,-y1,z1);
-            //          glColor3f(0.0,0.0,1.0);
             glVertex3d(x2,-y2,z2);
-            //          glColor3f(0.0,0.0,1.0);
             glVertex3d(x3,-y3,z3);
-            //          glColor3f(0.0,0.0,1.0);
             glVertex3d(x4,-y4,z4);
             glEnd();
         }
@@ -192,8 +171,7 @@ void OGLWidget::Kugel()
 
 void OGLWidget::Tisch() {
 
-
-
+    // For-Schleife für alle Dreiecke, werden durch i gedreht
     for (int i=0; i<Ecken; i++)
     {
         // Jeweiliges Dreieck
@@ -202,7 +180,8 @@ void OGLWidget::Tisch() {
         //Normalenvektor, Senkrecht nach unten
         glNormal3d(0,-1,0);
 
-        glColor3d(0.5/i, 0.5/i, 0.5/i);
+        // Farbe (hellgrau)
+        glColor3d(0.5, 0.5, 0.5);
         //Mittelpunkt
         glVertex3d(0, 0, 0);
         //Punkt Außen auf Z nach Vorne
@@ -230,37 +209,46 @@ void OGLWidget::Tisch() {
 
 void OGLWidget::Schnittpunkt(int i) {
 
-
-
-       // s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * dx;
-       // s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) = pz + lam2 * dz;
-
+    // Berechnung der Lamdas des Schnittpunkt
     double lam = -(px + s*sin(i*rot_rad) - (dx*(pz - s*cos(i*rot_rad)))/dz)/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)) - (dx*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz);
     double lam2 = (s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) -pz) / dz;
 
+    // Schnittpunkt
     sx = px + lam2  * dx;
     sz = pz + lam2 * dz;
 
 
-
 }
-
-
 void OGLWidget::Kollision(int i) {
 
     Schnittpunkt(i);
 
-    double fx = sx;
-    double fz = sz;
-
+    // Zwischenrechnung
     double x_2 = pow((px-sx),2);
     double z_2 = pow((pz-sz),2);
 
+    // Berechnung des Abstands zwischen Kreismittelpunkt und Schnittpunkt mit der jeweiligen Geraden
     double abstand = sqrt(x_2 + z_2);
 
+    // Wenn der Kugelrand gegen den Schnittpunkt kommt
     if (abstand<1) {
-        dz = -dz;
-        dx = -dx;
+
+        // NormalvektorKoordinaten
+        double normx = -(s * (cos((i+1)*rot_rad) - cos( i * rot_rad)));
+        double normz = (s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)));
+
+        //Zwischenrechnung
+        double powx = pow(normx,2);
+        double powz = pow(normz,2);
+        double bruch = 2/(powx+powz);
+
+        // Zwischenspeichern der alten dx und dz-Werte
+        double dx_t = dx;
+        double dz_t = dz;
+
+        // Berechnung der neuen Werte
+        dx = ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t);
+        dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
     }
 
 }
@@ -324,4 +312,8 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
+
+
+// s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * dx;
+// s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) = pz + lam2 * dz;
 
