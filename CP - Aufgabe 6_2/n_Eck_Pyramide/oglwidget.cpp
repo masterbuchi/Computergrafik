@@ -100,6 +100,9 @@ void OGLWidget::paintGL()
     glPopMatrix();
 
 
+    // Größe des Feldes
+    s = 1/(2-2*cos(rot_rad));
+
 
     dt=unfold/200;
 
@@ -111,65 +114,18 @@ void OGLWidget::paintGL()
     glTranslated(px,1,pz);
 
 
-    for (int i=0; i<Ecken; i++)
-    {
-        Kollision(i);
-
-    }
-
-
-    Kugel();
 
     glPopMatrix();
     glPopMatrix();
 
 }
 
-void OGLWidget::Kugel()
-{
-    int n=10;
-    int m=20;
-    double dalpha=2.0*M_PI/m;
-    double dbeta=M_PI/n/2.0;
-    int k=0,j=0;
-    double x1,x2,y1,y2,z1,z2=0;
-    double x3,x4,y3,y4,z3,z4=0;
-
-    for(j=0;j < n ;j+=1)
-        for(k=0;k < m ;k+=1)
-        {
-            x1=cos(j*dbeta)*cos(k*dalpha);
-            y1=sin(j*dbeta);
-            z1=-cos(j*dbeta)*sin(k*dalpha);
-            x2=cos((j+1)*dbeta)*cos(k*dalpha);
-            y2=sin((j+1)*dbeta);
-            z2=-cos((j+1)*dbeta)*sin(k*dalpha);
-            x3=cos((j+1)*dbeta)*cos((k+1)*dalpha);
-            y3=sin((j+1)*dbeta);
-            z3=-cos((j+1)*dbeta)*sin((k+1)*dalpha);
-            x4=cos(j*dbeta)*cos((k+1)*dalpha);
-            y4=sin(j*dbeta);
-            z4=-cos(j*dbeta)*sin((k+1)*dalpha);
-            glBegin(GL_QUADS);
-            glNormal3d(-x1,-y1,-z1);
-            glColor3d(1.0,0.0,1.0);
-            glVertex3d(x1,y1,z1);
-            glVertex3d(x2,y2,z2);
-            glVertex3d(x3,y3,z3);
-            glVertex3d(x4,y4,z4);
-            glEnd();
-            glBegin(GL_QUADS);
-            glNormal3d(-x1,-y1,-z1);
-            glVertex3d(x1,-y1,z1);
-            glVertex3d(x2,-y2,z2);
-            glVertex3d(x3,-y3,z3);
-            glVertex3d(x4,-y4,z4);
-            glEnd();
-        }
-}
 
 
 void OGLWidget::Tisch() {
+
+
+
 
     // For-Schleife für alle Dreiecke, werden durch i gedreht
     for (int i=0; i<Ecken; i++)
@@ -203,52 +159,6 @@ void OGLWidget::Tisch() {
         glVertex3d(s * -sin(i*rot_rad), 1, s * cos(i*rot_rad));
         glEnd();
 
-    }
-
-}
-
-void OGLWidget::Schnittpunkt(int i) {
-
-    // Berechnung der Lamdas des Schnittpunkt
-    double lam = -(px + s*sin(i*rot_rad) - (dx*(pz - s*cos(i*rot_rad)))/dz)/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)) - (dx*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz);
-    double lam2 = (s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) -pz) / dz;
-
-    // Schnittpunkt
-    sx = px + lam2  * dx;
-    sz = pz + lam2 * dz;
-
-
-}
-void OGLWidget::Kollision(int i) {
-
-    Schnittpunkt(i);
-
-    // Zwischenrechnung
-    double x_2 = pow((px-sx),2);
-    double z_2 = pow((pz-sz),2);
-
-    // Berechnung des Abstands zwischen Kreismittelpunkt und Schnittpunkt mit der jeweiligen Geraden
-    double abstand = sqrt(x_2 + z_2);
-
-    // Wenn der Kugelrand gegen den Schnittpunkt kommt
-    if (abstand<1) {
-
-        // NormalvektorKoordinaten
-        double normx = -(s * (cos((i+1)*rot_rad) - cos( i * rot_rad)));
-        double normz = (s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)));
-
-        //Zwischenrechnung
-        double powx = pow(normx,2);
-        double powz = pow(normz,2);
-        double bruch = 2/(powx+powz);
-
-        // Zwischenspeichern der alten dx und dz-Werte
-        double dx_t = dx;
-        double dz_t = dz;
-
-        // Berechnung der neuen Werte
-        dx = ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t);
-        dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
     }
 
 }

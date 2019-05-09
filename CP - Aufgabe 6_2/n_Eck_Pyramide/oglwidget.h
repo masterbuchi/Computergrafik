@@ -42,9 +42,6 @@ public slots:
 
     void stepAnimation();
 
-    void Schnittpunkt (int i);
-
-    void Kollision(int i);
 
 protected:
     void initializeGL();
@@ -54,7 +51,6 @@ protected:
 protected:
     QTimer* animtimer; // Timer needed to step animation every x msec
     int animstep;      // Current animation step (used to rotate triangle
-    void Kugel();
     void Tisch();
     void SetMaterialColor(int side, double r, double g, double b);
 
@@ -76,11 +72,14 @@ protected:
     double Ecken=7.0;
 
     // Größe des Feldes
-    double s = 10;
+    double s = 0;
+
 
 
     // Winkel in Radian
     double rot_rad = 2.0*3.14159/Ecken;
+
+
 
 
     int rotx=0;       // Rotation angles (0..360)
