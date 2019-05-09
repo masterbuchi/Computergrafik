@@ -64,14 +64,34 @@ void OGLWidget::setUnfold(int newunfold)
 
 void OGLWidget::initializeGL()
 {
+
+
     initializeOpenGLFunctions();
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glClearColor(0,0,0,0);
+
+    // Use depth testing and the depth buffer
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHT0);
+    glDepthFunc(GL_LESS);
+
+    // Calculate color for each pixel fragment
+    glShadeModel(GL_SMOOTH);
+
+    // Enable lighting in scene
     glEnable(GL_LIGHTING);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+    // Set position of light source
+    float light_pos[] = { 10.f, 10.f, 10.f, 0.f };
+    glLightfv(GL_LIGHT1, GL_POSITION, light_pos );
+
+    // Set color for this light source
+    // (We are only specifying a diffuse light source)
+    float light_diffuse[] = { .9f, .9f, .9f, 1.f };
+    glLightfv(GL_LIGHT1, GL_DIFFUSE,  light_diffuse );
+
+    // Turn on this light
+    glEnable(GL_LIGHT1);
+
+    // Use the color of an object for light calculation
+    glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
     glEnable(GL_COLOR_MATERIAL);
 
 }
@@ -88,33 +108,59 @@ void OGLWidget::resizeGL(int w, int h)
 
 void OGLWidget::paintGL()
 {
-    glMatrixMode(GL_MODELVIEW);
+
+    // Clear the scene
+    glClearColor(0.f, 0.f, 0.f, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Prepare projection matrix
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-10, 10, -10, 10, 0, 200);
-    c = animstep;   // rotate one degree with each step
-    glTranslatef(0,0,-10);
+    // Prepare model matrix
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+
+
+     glTranslated(0,0,-10);
 
     // Apply rotation angles
     glPushMatrix();
-    glRotatef(-rotx, 1.0f, 0.0f, 0.0f); // Rotate around x axis
-    glRotatef(-roty, 0.0f, 1.0f, 0.0f); // Rotate around y axis
-    glRotatef(rotz, 0.0f, 0.0f, 1.0f); // Rotate around z axis
+    glRotated(-rotx, 1.0, 0.0, 0.0); // Rotate around x axis
+    glRotated(-roty, 0.0, 1.0, 0.0); // Rotate around y axis
+    glRotated(rotz, 0.0, 0.0, 1.0); // Rotate around z axis
+
+//    // Change light position
+//    float light_pos[] = { 0,
+//                          1.0f,
+//                          0, 0.f };
+//     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
+
+//    // Change light position
+//    float light_pos[] = { float(px),
+//                          10.f,
+//                          float(pz), 0.f };
+
+    // Change light position
+    float light_pos[] = { 10.f * cosf(animstep*PI/180.f),
+                          10.f,
+                          10.0f * sinf(animstep*PI/180.f), 0.f };
+    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
+
 
     //Apply scaling
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
 
-    glPushMatrix();
     Tisch();
-    glPopMatrix();
-
-
 
     dt=unfold/200;
 
 
     px+=dx*dt;
     pz+=dz*dt;
+
 
     glPushMatrix();
     glTranslated(px,1,pz);
@@ -126,8 +172,11 @@ void OGLWidget::paintGL()
 
     }
 
+    glColor3f( 1.0f, 1.0f, 0.0f );
 
     Kugel(QVector3D(0, 0, 0), 1);
+
+
 
     glPopMatrix();
     glPopMatrix();
@@ -135,7 +184,7 @@ void OGLWidget::paintGL()
 }
 
 void OGLWidget::Kugel( const QVector3D& pos, float rad,
-                            int nr_lat, int nr_lon )
+                       int nr_lat, int nr_lon )
 {
     // Angle delta in both directions
     const float lat_delta = PI / float( nr_lat );
@@ -155,13 +204,18 @@ void OGLWidget::Kugel( const QVector3D& pos, float rad,
 
             // Set normal vector (important for lighting!)
             glNormal3f( xn1, yn1, zn1 );
+
+            // Nächster Punkt
             glVertex3f( pos.x()+rad*xn1, pos.y()+rad*yn1, pos.z()+rad*zn1 );
 
             float xn2 = cosf( lat ) * sinf( lon + lon_delta );
             float yn2 = sinf( lat ) * sinf( lon + lon_delta );
             float zn2 = cosf( lon + lon_delta );
 
+            // normalvektor
             glNormal3f( xn2, yn2, zn2 );
+
+            // Nächster Punkt
             glVertex3f( pos.x()+rad*xn2, pos.y()+rad*yn2, pos.z()+rad*zn2 );
         }
         glEnd() ;
@@ -177,29 +231,48 @@ void OGLWidget::Tisch() {
     {
         // Jeweiliges Dreieck
         glBegin(GL_TRIANGLES);
-
-        //Normalenvektor, Senkrecht nach unten
-        glNormal3d(0,-1,0);
-
         // Farbe (hellgrau)
         glColor3d(0.5, 0.5, 0.5);
+
+        //Normalenvektor
+        glNormal3d(0,0,0);
         //Mittelpunkt
         glVertex3d(0, 0, 0);
+
+        //Normalenvektor
+        glNormal3d(-sin(i*rot_rad), 0 ,cos(i*rot_rad));
         //Punkt Außen auf Z nach Vorne
         glVertex3d(s * -sin(i*rot_rad), 0 , s * cos(i*rot_rad));
+
+
+        //Normalenvektor
+        glNormal3d(-sin((i+1)*rot_rad), 0 ,cos((i+1)*rot_rad));
         //Rotationspunkt
         glVertex3d(s * -sin((i+1)*rot_rad), 0 , s * cos((i+1)*rot_rad));
         glEnd();
 
+
         // Mantelstück
         glBegin(GL_QUADS);
-        glColor3d(255.0, 0.0, 255.0);
+        glColor3d(0.5, 0.0, 0.5);
+
+        //Normalenvektor
+        glNormal3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
         // Unten Links
         glVertex3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
+
+        //Normalenvektor
+        glNormal3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad));
         // Unten Rechts
         glVertex3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad) );
+
+        //Normalenvektor
+        glNormal3d(s * -sin((i+1)*rot_rad),1 , s * cos((i+1)*rot_rad));
         // Oben Rechts
         glVertex3d(s * -sin((i+1)*rot_rad),1 , s * cos((i+1)*rot_rad) );
+
+        //Normalenvektor
+        glNormal3d(s * -sin(i*rot_rad), 1, s * cos(i*rot_rad));
         // Oben Links
         glVertex3d(s * -sin(i*rot_rad), 1, s * cos(i*rot_rad));
         glEnd();

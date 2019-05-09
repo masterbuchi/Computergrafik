@@ -12,7 +12,7 @@ class OGLWidget : public QOpenGLWidget,
     Q_OBJECT
 
 public:
-    OGLWidget(QWidget *parent = 0);
+    OGLWidget(QWidget *parent = nullptr);
     ~OGLWidget();
 
     // Used to rotate object by mouse
@@ -52,7 +52,6 @@ public slots:
 
     // Set light position
     void setLight(int newlight );
-
 
 
 protected:
