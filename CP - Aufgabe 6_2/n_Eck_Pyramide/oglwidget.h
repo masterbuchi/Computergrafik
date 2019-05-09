@@ -68,8 +68,9 @@ protected:
     double Ecken;
 
     // Größe des Feldes
-    double s = 0;
+    double s;
 
+    float PI;
 
 
     // Winkel in Radian

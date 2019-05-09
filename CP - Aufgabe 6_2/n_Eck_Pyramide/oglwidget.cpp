@@ -70,9 +70,9 @@ void OGLWidget::initializeGL()
     glLoadIdentity();
     glClearColor(0,0,0,0);
     glEnable(GL_DEPTH_TEST);
-   // glEnable(GL_LIGHT0);
-   // glEnable(GL_LIGHTING);
-   // glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+//    glEnable(GL_LIGHT0);
+//    glEnable(GL_LIGHTING);
+//    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
 
 }
@@ -83,7 +83,6 @@ void OGLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glOrtho(-10, 10, -10, 10, 0, 200);
-    c = animstep;   // rotate one degree with each step
     glTranslatef(0,0,-10);
 
     // Apply rotation angles
@@ -96,12 +95,14 @@ void OGLWidget::paintGL()
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
 
+    // Größe des Feldes
+    s = 1/(2-2*cos(rot_rad));
+
     glPushMatrix();
     Pyramide();
     glPopMatrix();
 
-    // Größe des Feldes
-    s = 1/(2-2*cos(rot_rad));
+
 
     dt=unfold/200;
 
@@ -126,26 +127,43 @@ void OGLWidget::Pyramide() {
         // Jeweiliges Dreieck
         glBegin(GL_TRIANGLES);
 
-        //Normalenvektor, Senkrecht nach unten
-        glNormal3d(0,-1,0);
+
 
         // Farbe
         glColor3f(0.0f, 0.0f, 1.0f);
+        //Normalenvektor
+        glNormal3d(0,0,0);
         //Mittelpunkt
         glVertex3d(0, 0, 0);
+
+        //Normalenvektor
+        glNormal3d(s * -sin(i*rot_rad), 0 , s * cos(i*rot_rad));
         //Punkt Außen auf Z nach Vorne
         glVertex3d(s * -sin(i*rot_rad), 0 , s * cos(i*rot_rad));
+
+        //Normalenvektor
+        glNormal3d(s * -sin((i+1)*rot_rad), 0 , s * cos((i+1)*rot_rad));
         //Rotationspunkt
         glVertex3d(s * -sin((i+1)*rot_rad), 0 , s * cos((i+1)*rot_rad));
         glEnd();
 
+
+        glColor3f(0.7f / i,0.9f/i, 0.0f);
         //Pyramidenspitze
         glBegin(GL_TRIANGLES);
-        glColor3f(0.0f, 0.9f / i, 0.0f);
+
+        //Normalenvektor
+        glNormal3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
         // i Punkt
         glVertex3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
+
+        //Normalenvektor
+        glNormal3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad));
         // i++ Punkt
         glVertex3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad) );
+
+        //Normalenvektor
+        glNormal3d(0,5,0);
         // Mittelpunkt
         glVertex3d(0,5,0);
         glEnd();

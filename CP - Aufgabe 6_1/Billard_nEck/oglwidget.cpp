@@ -123,7 +123,7 @@ void OGLWidget::paintGL()
 
 
 
-     glTranslated(0,0,-10);
+    glTranslated(0,0,-10);
 
     // Apply rotation angles
     glPushMatrix();
@@ -131,16 +131,16 @@ void OGLWidget::paintGL()
     glRotated(-roty, 0.0, 1.0, 0.0); // Rotate around y axis
     glRotated(rotz, 0.0, 0.0, 1.0); // Rotate around z axis
 
-//    // Change light position
-//    float light_pos[] = { 0,
-//                          1.0f,
-//                          0, 0.f };
-//     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
+    //    // Change light position
+    //    float light_pos[] = { 0,
+    //                          1.0f,
+    //                          0, 0.f };
+    //     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
-//    // Change light position
-//    float light_pos[] = { float(px),
-//                          10.f,
-//                          float(pz), 0.f };
+    //    // Change light position
+    //    float light_pos[] = { float(px),
+    //                          10.f,
+    //                          float(pz), 0.f };
 
     // Change light position
     float light_pos[] = { 10.f * cosf(animstep*PI/180.f),
@@ -304,16 +304,27 @@ void OGLWidget::Kollision(int i) {
     // Berechnung des Abstands zwischen Kreismittelpunkt und Schnittpunkt mit der jeweiligen Geraden
     double abstand = sqrt(x_2 + z_2);
 
+    // NormalvektorKoordinaten
+    double normx = -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
+    double normz = s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
+
+    double powx = pow(normx,2);
+    double powz = pow(normz,2);
+
+
+
+    //    double rx =  s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
+    //    double rz = s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
+
+    //    double c =  normx * rx + normz * rz;
+
+    //    //Zwischenrechnung
+
+    //    double d = abs((c - (normx*px + normz * pz))/sqrt(powx+powz));
+
     // Wenn der Kugelrand gegen den Schnittpunkt kommt
     if (abstand<1) {
 
-        // NormalvektorKoordinaten
-        double normx = -(s * (cos((i+1)*rot_rad) - cos( i * rot_rad)));
-        double normz = (s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)));
-
-        //Zwischenrechnung
-        double powx = pow(normx,2);
-        double powz = pow(normz,2);
         double bruch = 2/(powx+powz);
 
         // Zwischenspeichern der alten dx und dz-Werte

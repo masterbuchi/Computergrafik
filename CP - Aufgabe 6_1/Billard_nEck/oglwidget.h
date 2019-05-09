@@ -79,7 +79,7 @@ protected:
 
 
     // Anzahl der Ecken;
-    double Ecken=200.0;
+    double Ecken=3.0;
 
     // Größe des Feldes
     double s = 10;
