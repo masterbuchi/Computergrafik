@@ -7,17 +7,13 @@
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
 {
-    // Setup the animation timer to fire every x msec
-    animtimer = new QTimer(this);
-    animtimer->start( 10 );
-
-    // Everytime the timer fires, the animation is going one step forward
-    connect(animtimer, SIGNAL(timeout()), this, SLOT(stepAnimation()));
-
-    animstep = 0;
     roty = 0;
     rotz = 0;
     zoom = 100;
+
+    Ecken = 7;
+    rot_rad = 2.0*3.14159/Ecken;
+
     //    M_PI = 3.1415f
 }
 
@@ -25,10 +21,15 @@ OGLWidget::~OGLWidget()
 {
 }
 
-void OGLWidget::stepAnimation()
+
+void OGLWidget::setEcken(int newEcken)
 {
-    animstep++;    // Increase animation steps
-    update();      // Trigger redraw of scene with paintGL
+    Ecken = newEcken;
+
+    rot_rad = 2.0*3.14159/Ecken;
+
+    update();
+
 }
 
 void OGLWidget::setRotX(int newrx)
@@ -69,9 +70,9 @@ void OGLWidget::initializeGL()
     glLoadIdentity();
     glClearColor(0,0,0,0);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+   // glEnable(GL_LIGHT0);
+   // glEnable(GL_LIGHTING);
+   // glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
 
 }
@@ -96,24 +97,19 @@ void OGLWidget::paintGL()
     glScaled( scale, scale, scale ); // Scale along all axis
 
     glPushMatrix();
-    Tisch();
+    Pyramide();
     glPopMatrix();
-
 
     // Größe des Feldes
     s = 1/(2-2*cos(rot_rad));
 
-
     dt=unfold/200;
-
 
     px+=dx*dt;
     pz+=dz*dt;
 
     glPushMatrix();
     glTranslated(px,1,pz);
-
-
 
     glPopMatrix();
     glPopMatrix();
@@ -122,10 +118,7 @@ void OGLWidget::paintGL()
 
 
 
-void OGLWidget::Tisch() {
-
-
-
+void OGLWidget::Pyramide() {
 
     // For-Schleife für alle Dreiecke, werden durch i gedreht
     for (int i=0; i<Ecken; i++)
@@ -136,8 +129,8 @@ void OGLWidget::Tisch() {
         //Normalenvektor, Senkrecht nach unten
         glNormal3d(0,-1,0);
 
-        // Farbe (hellgrau)
-        glColor3d(0.5, 0.5, 0.5);
+        // Farbe
+        glColor3f(0.0f, 0.0f, 1.0f);
         //Mittelpunkt
         glVertex3d(0, 0, 0);
         //Punkt Außen auf Z nach Vorne
@@ -146,17 +139,15 @@ void OGLWidget::Tisch() {
         glVertex3d(s * -sin((i+1)*rot_rad), 0 , s * cos((i+1)*rot_rad));
         glEnd();
 
-        // Mantelstück
-        glBegin(GL_QUADS);
-        glColor3d(255.0, 0.0, 255.0);
-        // Unten Links
+        //Pyramidenspitze
+        glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.9f / i, 0.0f);
+        // i Punkt
         glVertex3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
-        // Unten Rechts
+        // i++ Punkt
         glVertex3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad) );
-        // Oben Rechts
-        glVertex3d(s * -sin((i+1)*rot_rad),1 , s * cos((i+1)*rot_rad) );
-        // Oben Links
-        glVertex3d(s * -sin(i*rot_rad), 1, s * cos(i*rot_rad));
+        // Mittelpunkt
+        glVertex3d(0,5,0);
         glEnd();
 
     }
@@ -221,9 +212,3 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
 }
-
-
-
-// s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * dx;
-// s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) = pz + lam2 * dz;
-

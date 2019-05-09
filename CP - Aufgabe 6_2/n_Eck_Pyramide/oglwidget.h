@@ -32,16 +32,13 @@ public slots:
     void setRotX( int newrx );
     void setRotY( int newry );
     void setRotZ( int newrz );
+    void setEcken( int newEcken );
 
     // Set zoom factor
     void setZoom( int newzoom );
 
     // Set unfolding position
     void setUnfold( int newunfold );
-
-
-    void stepAnimation();
-
 
 protected:
     void initializeGL();
@@ -51,7 +48,7 @@ protected:
 protected:
     QTimer* animtimer; // Timer needed to step animation every x msec
     int animstep;      // Current animation step (used to rotate triangle
-    void Tisch();
+    void Pyramide();
     void SetMaterialColor(int side, double r, double g, double b);
 
 protected:
@@ -67,9 +64,8 @@ protected:
     double sx;
     double sz;
 
-
     // Anzahl der Ecken;
-    double Ecken=7.0;
+    double Ecken;
 
     // Größe des Feldes
     double s = 0;
@@ -77,10 +73,7 @@ protected:
 
 
     // Winkel in Radian
-    double rot_rad = 2.0*3.14159/Ecken;
-
-
-
+    double rot_rad;
 
     int rotx=0;       // Rotation angles (0..360)
     int roty=0;
