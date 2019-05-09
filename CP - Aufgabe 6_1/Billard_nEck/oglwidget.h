@@ -5,10 +5,11 @@
 #include <QOpenGLFunctions>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QVector3D>
 
 
 class OGLWidget : public QOpenGLWidget,
-                  protected QOpenGLFunctions
+        protected QOpenGLFunctions
 {
     Q_OBJECT
 
@@ -39,6 +40,10 @@ public slots:
     // Set unfolding position
     void setUnfold( int newunfold );
 
+    // Draw a sphere with center pos, radius rad and nr_lat/nr_lon segments
+    void Kugel(const QVector3D &pos,
+               float rad = 1.f,
+               int nr_lat = 90, int nr_lon = 90 );
 
     void stepAnimation();
 
@@ -48,13 +53,12 @@ public slots:
 
 protected:
     void initializeGL();
-    //void resizeGL(int w, int h);
+    void resizeGL(int w, int h);
     void paintGL();
 
 protected:
     QTimer* animtimer; // Timer needed to step animation every x msec
     int animstep;      // Current animation step (used to rotate triangle
-    void Kugel();
     void Tisch();
     void SetMaterialColor(int side, double r, double g, double b);
 
@@ -70,6 +74,8 @@ protected:
 
     double sx;
     double sz;
+
+    float PI;
 
 
     // Anzahl der Ecken;

@@ -18,7 +18,7 @@ OGLWidget::OGLWidget(QWidget *parent)
     roty = 0;
     rotz = 0;
     zoom = 100;
-    //    M_PI = 3.1415f
+    PI = 3.1415f;
 }
 
 OGLWidget::~OGLWidget()
@@ -76,6 +76,15 @@ void OGLWidget::initializeGL()
 
 }
 
+void OGLWidget::resizeGL(int w, int h)
+{
+    glViewport(0,0,w,h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
 
 void OGLWidget::paintGL()
 {
@@ -118,55 +127,47 @@ void OGLWidget::paintGL()
     }
 
 
-    Kugel();
+    Kugel(QVector3D(0, 0, 0), 1);
 
     glPopMatrix();
     glPopMatrix();
 
 }
 
-void OGLWidget::Kugel()
+void OGLWidget::Kugel( const QVector3D& pos, float rad,
+                            int nr_lat, int nr_lon )
 {
-    int n=10;
-    int m=20;
-    double dalpha=2.0*M_PI/m;
-    double dbeta=M_PI/n/2.0;
-    int k=0,j=0;
-    double x1,x2,y1,y2,z1,z2=0;
-    double x3,x4,y3,y4,z3,z4=0;
+    // Angle delta in both directions
+    const float lat_delta = PI / float( nr_lat );
+    const float lon_delta = PI / float( nr_lon );
 
-    for(j=0;j < n ;j+=1)
-        for(k=0;k < m ;k+=1)
+    // Create horizontal stripes of squares
+    for( float lon = 0.0f; lon < 1.0f*PI; lon += lon_delta )
+    {
+        glBegin( GL_QUAD_STRIP ) ;
+        for( float lat = 0.0f; lat <= 2.0f*PI; lat += lat_delta )
         {
-            x1=cos(j*dbeta)*cos(k*dalpha);
-            y1=sin(j*dbeta);
-            z1=-cos(j*dbeta)*sin(k*dalpha);
-            x2=cos((j+1)*dbeta)*cos(k*dalpha);
-            y2=sin((j+1)*dbeta);
-            z2=-cos((j+1)*dbeta)*sin(k*dalpha);
-            x3=cos((j+1)*dbeta)*cos((k+1)*dalpha);
-            y3=sin((j+1)*dbeta);
-            z3=-cos((j+1)*dbeta)*sin((k+1)*dalpha);
-            x4=cos(j*dbeta)*cos((k+1)*dalpha);
-            y4=sin(j*dbeta);
-            z4=-cos(j*dbeta)*sin((k+1)*dalpha);
-            glBegin(GL_QUADS);
-            glNormal3d(-x1,-y1,-z1);
-            glColor3d(1.0,0.0,1.0);
-            glVertex3d(x1,y1,z1);
-            glVertex3d(x2,y2,z2);
-            glVertex3d(x3,y3,z3);
-            glVertex3d(x4,y4,z4);
-            glEnd();
-            glBegin(GL_QUADS);
-            glNormal3d(-x1,-y1,-z1);
-            glVertex3d(x1,-y1,z1);
-            glVertex3d(x2,-y2,z2);
-            glVertex3d(x3,-y3,z3);
-            glVertex3d(x4,-y4,z4);
-            glEnd();
+            // Each iteration adds another square, the other vertices
+            // are taken from the existing stripe
+            float xn1 = cosf( lat ) * sinf( lon );
+            float yn1 = sinf( lat ) * sinf( lon );
+            float zn1 = cosf( lon );
+
+            // Set normal vector (important for lighting!)
+            glNormal3f( xn1, yn1, zn1 );
+            glVertex3f( pos.x()+rad*xn1, pos.y()+rad*yn1, pos.z()+rad*zn1 );
+
+            float xn2 = cosf( lat ) * sinf( lon + lon_delta );
+            float yn2 = sinf( lat ) * sinf( lon + lon_delta );
+            float zn2 = cosf( lon + lon_delta );
+
+            glNormal3f( xn2, yn2, zn2 );
+            glVertex3f( pos.x()+rad*xn2, pos.y()+rad*yn2, pos.z()+rad*zn2 );
         }
+        glEnd() ;
+    }
 }
+
 
 
 void OGLWidget::Tisch() {
