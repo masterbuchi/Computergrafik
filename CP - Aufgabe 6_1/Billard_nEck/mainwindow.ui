@@ -30,10 +30,90 @@
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="4">
+       <widget class="QDial" name="zoom">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+        <property name="wrapping">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="lbXRot">
+        <property name="text">
+         <string>X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QDial" name="unfold">
+        <property name="maximum">
+         <number>30</number>
+        </property>
+        <property name="wrapping">
+         <bool>false</bool>
+        </property>
+        <property name="notchesVisible">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDial" name="xRot">
+        <property name="minimum">
+         <number>-90</number>
+        </property>
+        <property name="maximum">
+         <number>90</number>
+        </property>
+        <property name="wrapping">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="3" alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="lbZRot">
         <property name="text">
          <string>Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="lbUnfold">
+        <property name="text">
+         <string>Tempo</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="lbYRot">
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QDial" name="zRot">
+        <property name="minimum">
+         <number>-90</number>
+        </property>
+        <property name="maximum">
+         <number>90</number>
+        </property>
+        <property name="wrapping">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4" alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="lbZoom">
+        <property name="text">
+         <string>Zoom</string>
         </property>
        </widget>
       </item>
@@ -53,80 +133,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2" alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="lbYRot">
-        <property name="text">
-         <string>Y</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDial" name="xRot">
-        <property name="maximum">
-         <number>360</number>
-        </property>
-        <property name="wrapping">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QDial" name="zRot">
-        <property name="maximum">
-         <number>360</number>
-        </property>
-        <property name="wrapping">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="lbXRot">
-        <property name="text">
-         <string>X</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QDial" name="unfold">
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="wrapping">
-         <bool>false</bool>
-        </property>
-        <property name="notchesVisible">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="lbUnfold">
-        <property name="text">
-         <string>Tempo</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
-       <widget class="QDial" name="zoom">
-        <property name="maximum">
-         <number>200</number>
-        </property>
-        <property name="value">
-         <number>100</number>
-        </property>
-        <property name="wrapping">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4" alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="lbZoom">
-        <property name="text">
-         <string>Zoom</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </item>
    </layout>
@@ -137,7 +143,7 @@
      <x>0</x>
      <y>0</y>
      <width>679</width>
-     <height>31</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

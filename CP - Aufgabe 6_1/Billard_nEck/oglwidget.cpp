@@ -1,6 +1,7 @@
 #include "oglwidget.h"
 #include "vec3.hpp"
 #include <cmath>
+#include <iostream>
 
 
 
@@ -15,10 +16,9 @@ OGLWidget::OGLWidget(QWidget *parent)
     connect(animtimer, SIGNAL(timeout()), this, SLOT(stepAnimation()));
 
     animstep = 0;
-    roty = 0;
-    rotz = 0;
     zoom = 100;
-    PI = 3.1415f;
+    PI = 3.1415;
+    PIf = 3.1414f;
 }
 
 OGLWidget::~OGLWidget()
@@ -33,21 +33,23 @@ void OGLWidget::stepAnimation()
 
 void OGLWidget::setRotX(int newrx)
 {
-    rotx = newrx;
+    rotx = newrx % 360;
     update();
 }
 
 void OGLWidget::setRotY(int newry)
 {
-    roty = newry;
+    roty = newry % 360;
     update();
 }
 
 void OGLWidget::setRotZ(int newrz)
 {
-    rotz = newrz;
+    rotz = newrz % 360;
     update();
 }
+
+
 
 void OGLWidget::setZoom(int newzoom)
 {
@@ -143,9 +145,9 @@ void OGLWidget::paintGL()
     //                          float(pz), 0.f };
 
     // Change light position
-    float light_pos[] = { 10.f * cosf(animstep*PI/180.f),
+    float light_pos[] = { 10.f * cosf(animstep*PIf/180.f),
                           10.f,
-                          10.0f * sinf(animstep*PI/180.f), 0.f };
+                          10.0f * sinf(animstep*PIf/180.f), 0.f };
     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
 
@@ -155,11 +157,15 @@ void OGLWidget::paintGL()
 
     Tisch();
 
+
     dt=unfold/200;
 
+    //      ax = 1;
+    //      ax = 1;
 
-    px+=dx*dt;
-    pz+=dz*dt;
+
+    ax = masse_1 * -sin((rotz*PI/180));
+    az = masse_1 * -sin((rotx*PI/180));
 
 
     glPushMatrix();
@@ -174,27 +180,33 @@ void OGLWidget::paintGL()
 
     glColor3f( 1.0f, 1.0f, 0.0f );
 
-    Kugel(QVector3D(0, 0, 0), 1);
+    Kugel(QVector3D(0, 0, 0));
 
 
 
     glPopMatrix();
     glPopMatrix();
+
+    dx += ax*dt;
+    dx *= 0.95;
+    dz += az*dt;
+    dz *= 0.95;
+
 
 }
 
-void OGLWidget::Kugel( const QVector3D& pos, float rad,
+void OGLWidget::Kugel( const QVector3D& pos, double masse, float rad,
                        int nr_lat, int nr_lon )
 {
     // Angle delta in both directions
-    const float lat_delta = PI / float( nr_lat );
-    const float lon_delta = PI / float( nr_lon );
+    const float lat_delta = PIf / float( nr_lat );
+    const float lon_delta = PIf / float( nr_lon );
 
     // Create horizontal stripes of squares
-    for( float lon = 0.0f; lon < 1.0f*PI; lon += lon_delta )
+    for( float lon = 0.0f; lon < 1.0f*PIf; lon += lon_delta )
     {
         glBegin( GL_QUAD_STRIP ) ;
-        for( float lat = 0.0f; lat <= 2.0f*PI; lat += lat_delta )
+        for( float lat = 0.0f; lat <= 2.0f*PIf; lat += lat_delta )
         {
             // Each iteration adds another square, the other vertices
             // are taken from the existing stripe
@@ -232,7 +244,7 @@ void OGLWidget::Tisch() {
         // Jeweiliges Dreieck
         glBegin(GL_TRIANGLES);
         // Farbe (hellgrau)
-        glColor3d(0.5, 0.5, 0.5);
+        glColor3d(0.8, 0.8, 0.8);
 
         //Normalenvektor
         glNormal3d(0,0,0);
@@ -267,14 +279,14 @@ void OGLWidget::Tisch() {
         glVertex3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad) );
 
         //Normalenvektor
-        glNormal3d(s * -sin((i+1)*rot_rad),1 , s * cos((i+1)*rot_rad));
+        glNormal3d(s * -sin((i+1)*rot_rad),0.5 , s * cos((i+1)*rot_rad));
         // Oben Rechts
-        glVertex3d(s * -sin((i+1)*rot_rad),1 , s * cos((i+1)*rot_rad) );
+        glVertex3d(s * -sin((i+1)*rot_rad),0.5 , s * cos((i+1)*rot_rad) );
 
         //Normalenvektor
-        glNormal3d(s * -sin(i*rot_rad), 1, s * cos(i*rot_rad));
+        glNormal3d(s * -sin(i*rot_rad), 0.5, s * cos(i*rot_rad));
         // Oben Links
-        glVertex3d(s * -sin(i*rot_rad), 1, s * cos(i*rot_rad));
+        glVertex3d(s * -sin(i*rot_rad), 0.5, s * cos(i*rot_rad));
         glEnd();
 
     }
@@ -285,7 +297,7 @@ void OGLWidget::Schnittpunkt(int i) {
 
     // Berechnung der Lamdas des Schnittpunkt
     double lam = -(px + s*sin(i*rot_rad) - (dx*(pz - s*cos(i*rot_rad)))/dz)/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)) - (dx*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz);
-    double lam2 = (s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) -pz) / dz;
+    double lam2 = -(pz - s*cos(i*rot_rad) + lam*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz;
 
     // Schnittpunkt
     sx = px + lam2  * dx;
@@ -293,37 +305,55 @@ void OGLWidget::Schnittpunkt(int i) {
 
 
 }
+
+void OGLWidget::Lotschnittpunkt(int i) {
+
+    // s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * -(s * (cos((i+1)*rot_rad) - cos( i * rot_rad)));
+
+
+
+    // double lam2 = ((s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad))) - pz)  / (s * (-sin((i+1)*rot_rad) + sin( i * rot_rad))) ;
+
+    double lam = -(s - pz*cos(i*rot_rad) + px*sin(i*rot_rad) - s*cos(rot_rad) + pz*cos(rot_rad*(i + 1)) - px*sin(rot_rad*(i + 1)))/(2*s*(cos(rot_rad) - 1));
+    double lam2 = (pz - s*cos(i*rot_rad) + lam*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)));
+
+
+    // Schnittpunkt
+    lot_sx = px + lam2 * -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
+    lot_sz = pz + lam2 * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
+
+
+}
 void OGLWidget::Kollision(int i) {
 
-    Schnittpunkt(i);
-
-    // Zwischenrechnung
-    double x_2 = pow((px-sx),2);
-    double z_2 = pow((pz-sz),2);
-
-    // Berechnung des Abstands zwischen Kreismittelpunkt und Schnittpunkt mit der jeweiligen Geraden
-    double abstand = sqrt(x_2 + z_2);
 
     // NormalvektorKoordinaten
     double normx = -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
     double normz = s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
 
-    double powx = pow(normx,2);
-    double powz = pow(normz,2);
 
+    Schnittpunkt(i);
 
+    Lotschnittpunkt(i);
 
-    //    double rx =  s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
-    //    double rz = s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
+    //    // Zwischenrechnung
+    //    double x_2 = pow((px-sx),2);
+    //    double z_2 = pow((pz-sz),2);
 
-    //    double c =  normx * rx + normz * rz;
+    //    // Berechnung des Abstands zwischen Kreismittelpunkt und Schnittpunkt mit der jeweiligen Geraden
+    //    double abstand = sqrt(x_2 + z_2);
 
-    //    //Zwischenrechnung
+    double lpx = pow(px-lot_sx,2);
+    double lpz = pow(pz-lot_sz,2);
 
-    //    double d = abs((c - (normx*px + normz * pz))/sqrt(powx+powz));
+    double abstand_lot = sqrt(lpx + lpz);
 
-    // Wenn der Kugelrand gegen den Schnittpunkt kommt
-    if (abstand<1) {
+    double lotrichtung = (lot_sx-px)*dx + (lot_sz-pz)* dz;
+    // Wenn der Kugelrand gegen den Lotpunkt kommt
+    if (abstand_lot<1 && lotrichtung > 0) {
+
+        double powx = pow(normx,2);
+        double powz = pow(normz,2);
 
         double bruch = 2/(powx+powz);
 
@@ -336,29 +366,34 @@ void OGLWidget::Kollision(int i) {
         dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
     }
 
+
+
+    px += dx*dt;
+    pz += dz*dt;
+
 }
 
-void OGLWidget::mousePressEvent(QMouseEvent *event)
-{
-    // Upon mouse pressed, we store the current position...
-    lastpos = event->pos();
-}
+//void OGLWidget::mousePressEvent(QMouseEvent *event)
+//{
+//    // Upon mouse pressed, we store the current position...
+//    lastpos = event->pos();
+//}
 
-void OGLWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    // ... and while moving, we calculate the dragging deltas
-    // Left button: Rotating around x and y axis
-    int dx = (event->buttons() & Qt::LeftButton) ? lastpos.y() - event->y() : 0;
-    int dy = lastpos.x() - event->x();
-    // Right button: Rotating around z and y axis
-    int dz = (event->buttons() & Qt::RightButton) ? lastpos.y() - event->y() : 0;
+//void OGLWidget::mouseMoveEvent(QMouseEvent *event)
+//{
+//    // ... and while moving, we calculate the dragging deltas
+//    // Left button: Rotating around x and y axis
+//    int dx = (event->buttons() & Qt::LeftButton) ? lastpos.y() - event->y() : 0;
+//    int dy = lastpos.x() - event->x();
+//    // Right button: Rotating around z and y axis
+//    int dz = (event->buttons() & Qt::RightButton) ? lastpos.y() - event->y() : 0;
 
-    // Now let the world know that we want to rotate
-    emit changeRotation( dx, dy, dz );
+//    // Now let the world know that we want to rotate
+//    emit changeRotation( dx, dy, dz );
 
-    // Make the current position the starting point for the next dragging step
-    lastpos = event->pos();
-}
+//    // Make the current position the starting point for the next dragging step
+//    lastpos = event->pos();
+//}
 
 void OGLWidget::keyPressEvent(QKeyEvent *event)
 {
@@ -375,20 +410,23 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
         emit changeRotation( -keyDelta, 0, 0 );
         break;
 
-        // Left/Right: Rotating around y axis
-    case Qt::Key_Left:
-        emit changeRotation( 0, keyDelta, 0 );
-        break;
-    case Qt::Key_Right:
-        emit changeRotation( 0, -keyDelta, 0 );
-        break;
 
-        // Pg up/down: Rotating around z axis
-    case Qt::Key_PageUp:
+
+        // Left/Right: Rotating around z axis
+    case Qt::Key_Left:
         emit changeRotation( 0, 0, keyDelta );
         break;
-    case Qt::Key_PageDown:
+    case Qt::Key_Right:
         emit changeRotation( 0, 0, -keyDelta );
+        break;
+
+
+        // Pg up/down: Rotating around y axis
+    case Qt::Key_PageUp:
+        emit changeRotation( 0, keyDelta, 0 );
+        break;
+    case Qt::Key_PageDown:
+        emit changeRotation( 0, -keyDelta, 0 );
         break;
 
         // All other will be ignored
