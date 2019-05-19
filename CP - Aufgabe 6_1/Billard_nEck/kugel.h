@@ -11,21 +11,24 @@ class Kugel
 {
 public:
 
-    Kugel(const QVector3D& pos, double masse, double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
+    Kugel(double px, double py, double pz, double masse, double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
     {
-        //        this->initpx = px;
-        //        this->initpy = py;
-        //        this->initpz = pz;
-        this->px = pos.x();
-        this->py = pos.y();
-        this->pz = pos.z();
-        this->radius = radius;
+
+
+        this->px = px;
+        this->py = py;
+        this->pz = pz;
+        this->rad = radius;
         this->mass = masse;
         this->nr_lat = nr_lat;
         this->nr_lon = nr_lon;
         this->Ecken = Ecken;
         this->rot_rad = rot_rad;
         this->s = s;
+
+        //        this->initpx = px;
+        //        this->initpy = py;
+        //        this->initpz = pz;
     }
 
     //    void reset() {
@@ -37,7 +40,7 @@ public:
 
 
 
-//    bool isCollidingX, isCollidingZ;
+    //    bool isCollidingX, isCollidingZ;
 
     // Richtungsvektoren GESCHWINDIGKEIT
     double dx = 0;
@@ -45,15 +48,15 @@ public:
     double dz = 0;
 
     // ORT
-    double px = 0;
-    double py = 0;
-    double pz = 0;
+    double px = 0.0;
+    double py = 0.0;
+    double pz = 0.0;
 
     //    // Ursprungsort
     //    double initpx, initpy, initpz;
 
     //Daten Kugel
-    double radius;
+    double rad;
     double mass;
     int nr_lat;
     int nr_lon;
@@ -68,10 +71,14 @@ public:
     double ax;
     double az;
 
+    double rotx;
+    double rotz;
+    double dt;
 
-//    // Schnittpunkt Koordinaten
-//    double sx;
-//    double sz;
+
+    //    // Schnittpunkt Koordinaten
+    //    double sx;
+    //    double sz;
 
     //Lotschnittpunkt Koordinaten
     double lot_sx;
@@ -89,7 +96,7 @@ public:
 
 
     void zeichnen();
-//    void Schnittpunkt(int i);
+    //    void Schnittpunkt(int i);
     void Lotschnittpunkt(int i);
     void Kollision(int i);
 };

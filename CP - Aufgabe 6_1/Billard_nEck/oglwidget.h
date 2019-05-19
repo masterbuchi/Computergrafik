@@ -60,7 +60,7 @@ protected:
 protected:
 
     // Anzahl der Ecken;
-    int Ecken=4;
+    int Ecken=3;
 
     // Größe des Feldes
     double s = 10;
@@ -77,13 +77,12 @@ protected:
     Kugel kugel_2;
 
     // ZEIT
-    double t;
     double dt;
 
     double g = 9.81;
 
-    double PI;
-    float PIf;
+   double PI = 3.1415;
+   float PIf = 3.1415f;
 
 
     int zoom;       // Zoom factor (0..200, 100 for 1:1)

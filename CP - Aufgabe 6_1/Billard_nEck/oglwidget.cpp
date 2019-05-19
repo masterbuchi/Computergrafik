@@ -4,11 +4,11 @@
 #include <iostream>
 
 
-// Kugel(const QVector3D& pos, double masse ,double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
+// Kugel(double px, double py, double pz, double masse, double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(QVector3D(0, 1, 0),1,1,Ecken,rot_rad,s)),
-      kugel_2(Kugel(QVector3D(1, 2, 0),1,2,Ecken,rot_rad,s))
+      kugel_1(Kugel(0,0,0,1,1,Ecken,rot_rad,s)),
+      kugel_2(Kugel(0,0,0,1,2,Ecken,rot_rad,s))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -19,8 +19,6 @@ OGLWidget::OGLWidget(QWidget *parent)
 
     animstep = 0;
     zoom = 100;
-    PI = 3.1415;
-    PIf = 3.1414f;
 }
 
 OGLWidget::~OGLWidget()
@@ -102,6 +100,7 @@ void OGLWidget::initializeGL()
 
 void OGLWidget::resizeGL(int w, int h)
 {
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -120,14 +119,12 @@ void OGLWidget::paintGL()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-10, 10, -10, 10, 0, 200);
-    // Prepare model matrix
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+
 
 
 
     glTranslated(0,0,-10);
-    dt = unfold/200;
+
 
     glPushMatrix();
 
@@ -142,25 +139,28 @@ void OGLWidget::paintGL()
                           10.0f * sinf(animstep*PIf/180.f), 0.f };
     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
-
+    dt = unfold/200;
 
     //Apply scaling
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
 
-    Tisch();
 
     kugel_1.update(kugel_2, rotx, rotz, dt);
+
+
     kugel_2.update(kugel_1, rotx, rotz, dt);
 
 
+    Tisch();
+
+
     glPopMatrix();
-
-
 }
 
 
 void OGLWidget::Tisch() {
+
 
     // For-Schleife für alle Dreiecke, werden durch i gedreht
     for (int i=0; i<Ecken; i++)
@@ -186,7 +186,6 @@ void OGLWidget::Tisch() {
         //Rotationspunkt
         glVertex3d(s * -sin((i+1)*rot_rad), 0 , s * cos((i+1)*rot_rad));
         glEnd();
-
 
         // Mantelstück
         glBegin(GL_QUADS);
@@ -214,6 +213,7 @@ void OGLWidget::Tisch() {
         glEnd();
 
     }
+
 
 }
 
