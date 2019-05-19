@@ -6,7 +6,9 @@
 
 
 OGLWidget::OGLWidget(QWidget *parent)
-    : QOpenGLWidget(parent)
+    : QOpenGLWidget(parent),
+      kugel_1(Kugel(QVector3D(0, 1, 0),1,1,Ecken,rot_rad,s)),
+      kugel_2(Kugel(QVector3D(1, 1, 0),1,1,Ecken,rot_rad,s))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -133,17 +135,6 @@ void OGLWidget::paintGL()
     glRotated(-roty, 0.0, 1.0, 0.0); // Rotate around y axis
     glRotated(rotz, 0.0, 0.0, 1.0); // Rotate around z axis
 
-    //    // Change light position
-    //    float light_pos[] = { 0,
-    //                          1.0f,
-    //                          0, 0.f };
-    //     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
-
-    //    // Change light position
-    //    float light_pos[] = { float(px),
-    //                          10.f,
-    //                          float(pz), 0.f };
-
     // Change light position
     float light_pos[] = { 10.f * cosf(animstep*PIf/180.f),
                           10.f,
@@ -158,82 +149,23 @@ void OGLWidget::paintGL()
     Tisch();
 
 
-    dt=unfold/200;
-
-    //      ax = 1;
-    //      ax = 1;
+    dt = unfold/200;
 
 
-    ax = masse_1 * -sin((rotz*PI/180));
-    az = masse_1 * -sin((rotx*PI/180));
+        kugel_1.update(kugel_2, rotx, rotz, dt);
+        kugel_2.update(kugel_1, rotx, rotz, dt);
 
 
-    glPushMatrix();
-    glTranslated(px,1,pz);
 
 
-    for (int i=0; i<Ecken; i++)
-    {
-        Kollision(i);
 
-    }
-
-    glColor3f( 1.0f, 1.0f, 0.0f );
-
-    Kugel(QVector3D(0, 0, 0));
-
-
+//    kugel_1.update(kugel_2, rotx, rotz, dt);
+//    kugel_2.update(kugel_1, rotx, rotz, dt);
 
     glPopMatrix();
-    glPopMatrix();
-
-    dx += ax*dt;
-    dx *= 0.95;
-    dz += az*dt;
-    dz *= 0.95;
 
 
 }
-
-void OGLWidget::Kugel( const QVector3D& pos, double masse, float rad,
-                       int nr_lat, int nr_lon )
-{
-    // Angle delta in both directions
-    const float lat_delta = PIf / float( nr_lat );
-    const float lon_delta = PIf / float( nr_lon );
-
-    // Create horizontal stripes of squares
-    for( float lon = 0.0f; lon < 1.0f*PIf; lon += lon_delta )
-    {
-        glBegin( GL_QUAD_STRIP ) ;
-        for( float lat = 0.0f; lat <= 2.0f*PIf; lat += lat_delta )
-        {
-            // Each iteration adds another square, the other vertices
-            // are taken from the existing stripe
-            float xn1 = cosf( lat ) * sinf( lon );
-            float yn1 = sinf( lat ) * sinf( lon );
-            float zn1 = cosf( lon );
-
-            // Set normal vector (important for lighting!)
-            glNormal3f( xn1, yn1, zn1 );
-
-            // Nächster Punkt
-            glVertex3f( pos.x()+rad*xn1, pos.y()+rad*yn1, pos.z()+rad*zn1 );
-
-            float xn2 = cosf( lat ) * sinf( lon + lon_delta );
-            float yn2 = sinf( lat ) * sinf( lon + lon_delta );
-            float zn2 = cosf( lon + lon_delta );
-
-            // normalvektor
-            glNormal3f( xn2, yn2, zn2 );
-
-            // Nächster Punkt
-            glVertex3f( pos.x()+rad*xn2, pos.y()+rad*yn2, pos.z()+rad*zn2 );
-        }
-        glEnd() ;
-    }
-}
-
 
 
 void OGLWidget::Tisch() {
@@ -293,85 +225,7 @@ void OGLWidget::Tisch() {
 
 }
 
-void OGLWidget::Schnittpunkt(int i) {
 
-    // Berechnung der Lamdas des Schnittpunkt
-    double lam = -(px + s*sin(i*rot_rad) - (dx*(pz - s*cos(i*rot_rad)))/dz)/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)) - (dx*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz);
-    double lam2 = -(pz - s*cos(i*rot_rad) + lam*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz;
-
-    // Schnittpunkt
-    sx = px + lam2  * dx;
-    sz = pz + lam2 * dz;
-
-
-}
-
-void OGLWidget::Lotschnittpunkt(int i) {
-
-    // s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * -(s * (cos((i+1)*rot_rad) - cos( i * rot_rad)));
-
-
-
-    // double lam2 = ((s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad))) - pz)  / (s * (-sin((i+1)*rot_rad) + sin( i * rot_rad))) ;
-
-    double lam = -(s - pz*cos(i*rot_rad) + px*sin(i*rot_rad) - s*cos(rot_rad) + pz*cos(rot_rad*(i + 1)) - px*sin(rot_rad*(i + 1)))/(2*s*(cos(rot_rad) - 1));
-    double lam2 = (pz - s*cos(i*rot_rad) + lam*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)));
-
-
-    // Schnittpunkt
-    lot_sx = px + lam2 * -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
-    lot_sz = pz + lam2 * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
-
-
-}
-void OGLWidget::Kollision(int i) {
-
-
-    // NormalvektorKoordinaten
-    double normx = -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
-    double normz = s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
-
-
-    Schnittpunkt(i);
-
-    Lotschnittpunkt(i);
-
-    //    // Zwischenrechnung
-    //    double x_2 = pow((px-sx),2);
-    //    double z_2 = pow((pz-sz),2);
-
-    //    // Berechnung des Abstands zwischen Kreismittelpunkt und Schnittpunkt mit der jeweiligen Geraden
-    //    double abstand = sqrt(x_2 + z_2);
-
-    double lpx = pow(px-lot_sx,2);
-    double lpz = pow(pz-lot_sz,2);
-
-    double abstand_lot = sqrt(lpx + lpz);
-
-    double lotrichtung = (lot_sx-px)*dx + (lot_sz-pz)* dz;
-    // Wenn der Kugelrand gegen den Lotpunkt kommt
-    if (abstand_lot<1 && lotrichtung > 0) {
-
-        double powx = pow(normx,2);
-        double powz = pow(normz,2);
-
-        double bruch = 2/(powx+powz);
-
-        // Zwischenspeichern der alten dx und dz-Werte
-        double dx_t = dx;
-        double dz_t = dz;
-
-        // Berechnung der neuen Werte
-        dx = ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t);
-        dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
-    }
-
-
-
-    px += dx*dt;
-    pz += dz*dt;
-
-}
 
 //void OGLWidget::mousePressEvent(QMouseEvent *event)
 //{

@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QTimer>
 #include <QVector3D>
+#include "kugel.h"
 
 
 class OGLWidget : public QOpenGLWidget,
@@ -43,19 +44,7 @@ public slots:
     // Set unfolding position
     void setUnfold( int newunfold );
 
-    // Draw a sphere with center pos, radius rad and nr_lat/nr_lon segments
-    void Kugel(const QVector3D &pos,
-               double masse = 1,
-               float rad = 1.f,
-               int nr_lat = 90, int nr_lon = 90 );
-
     void stepAnimation();
-
-    void Schnittpunkt (int i);
-
-    void Lotschnittpunkt(int i);
-
-    void Kollision(int i);
 
 protected:
     void initializeGL();
@@ -70,69 +59,31 @@ protected:
 
 protected:
 
-    double c;
-
-
-    // Richtungsvektoren GESCHWINDIGKEIT
-    double dx = 0;
-    double dy=1;
-    double dz = 0;
-
-     // ORT
-    double px=0.0;
-    double py=0.0;
-    double pz=0.0;
-
-
-
-    // BESCHLEUNIGUNG
-    double ax;
-    double az;
-
-    // ZEIT
-    double t;
-    double dt;
-
-
-
-
-
-    double sx;
-    double sz;
-
-    double lot_sx;
-    double lot_sz;
-
-    double g = 9.81;
-
-    double PI;
-    float PIf;
-
-
     // Anzahl der Ecken;
-    double Ecken=3.0;
+    int Ecken=3;
 
     // Größe des Feldes
-    double s = 10;
-
-
-    double masse_1 = 1;
-
-    double haft_reib_1 = 0.02;
+    int s = 10;
 
 
     // Winkel in Radian
     double rot_rad = 2.0*3.14159/Ecken;
 
-
     int rotx=0;       // Rotation angles (0..360)
     int roty=0;
     int rotz=0;
 
+    Kugel kugel_1;
+    Kugel kugel_2;
 
-    int winkelX = 0;
-    int winkelZ = 0;
+    // ZEIT
+    double t;
+    double dt;
 
+    double g = 9.81;
+
+    double PI;
+    float PIf;
 
 
     int zoom;       // Zoom factor (0..200, 100 for 1:1)

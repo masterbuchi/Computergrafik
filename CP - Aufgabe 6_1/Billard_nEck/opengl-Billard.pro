@@ -13,11 +13,14 @@ LIBS    += -lOpengl32
 
 
 SOURCES += main.cpp\
+    kugel.cpp \
         mainwindow.cpp \
-    oglwidget.cpp
+    oglwidget.cpp \
+    vec3.cpp
 
 HEADERS  += mainwindow.h \
     kugel.h \
-    oglwidget.h
+    oglwidget.h \
+    vec3.hpp
 
 FORMS    += mainwindow.ui
