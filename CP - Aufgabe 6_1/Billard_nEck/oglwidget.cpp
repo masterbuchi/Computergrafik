@@ -4,11 +4,11 @@
 #include <iostream>
 
 
-
+// Kugel(const QVector3D& pos, double masse ,double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
       kugel_1(Kugel(QVector3D(0, 1, 0),1,1,Ecken,rot_rad,s)),
-      kugel_2(Kugel(QVector3D(1, 1, 0),1,1,Ecken,rot_rad,s))
+      kugel_2(Kugel(QVector3D(1, 2, 0),1,2,Ecken,rot_rad,s))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -61,7 +61,7 @@ void OGLWidget::setZoom(int newzoom)
 
 void OGLWidget::setUnfold(int newunfold)
 {
-    unfold = newunfold/2;
+    unfold = newunfold;
     update();
 }
 
@@ -102,7 +102,6 @@ void OGLWidget::initializeGL()
 
 void OGLWidget::resizeGL(int w, int h)
 {
-    glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -128,9 +127,11 @@ void OGLWidget::paintGL()
 
 
     glTranslated(0,0,-10);
+    dt = unfold/200;
+
+    glPushMatrix();
 
     // Apply rotation angles
-    glPushMatrix();
     glRotated(-rotx, 1.0, 0.0, 0.0); // Rotate around x axis
     glRotated(-roty, 0.0, 1.0, 0.0); // Rotate around y axis
     glRotated(rotz, 0.0, 0.0, 1.0); // Rotate around z axis
@@ -142,25 +143,16 @@ void OGLWidget::paintGL()
     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
 
+
     //Apply scaling
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
 
     Tisch();
 
+    kugel_1.update(kugel_2, rotx, rotz, dt);
+    kugel_2.update(kugel_1, rotx, rotz, dt);
 
-    dt = unfold/200;
-
-
-        kugel_1.update(kugel_2, rotx, rotz, dt);
-        kugel_2.update(kugel_1, rotx, rotz, dt);
-
-
-
-
-
-//    kugel_1.update(kugel_2, rotx, rotz, dt);
-//    kugel_2.update(kugel_1, rotx, rotz, dt);
 
     glPopMatrix();
 

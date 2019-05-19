@@ -11,7 +11,7 @@ class Kugel
 {
 public:
 
-    Kugel(const QVector3D& pos, double masse ,double radius, int Ecken, double rot_rad, int s, int nr_lat = 90, int nr_lon = 90)
+    Kugel(const QVector3D& pos, double masse, double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
     {
         //        this->initpx = px;
         //        this->initpy = py;
@@ -37,7 +37,7 @@ public:
 
 
 
-    bool isCollidingX, isCollidingZ;
+//    bool isCollidingX, isCollidingZ;
 
     // Richtungsvektoren GESCHWINDIGKEIT
     double dx = 0;
@@ -62,19 +62,16 @@ public:
 
     int Ecken;
     double rot_rad;
-    int s;
+    double s;
 
     // BESCHLEUNIGUNG
     double ax;
     double az;
 
-    // ZEIT
-    double t;
-    double dt;
 
-    // Schnittpunkt Koordinaten
-    double sx;
-    double sz;
+//    // Schnittpunkt Koordinaten
+//    double sx;
+//    double sz;
 
     //Lotschnittpunkt Koordinaten
     double lot_sx;
@@ -86,11 +83,13 @@ public:
     float PIf = 3.1414f;
 
     void update(Kugel other, double rotx, double rotz, double dt);
+
+
     bool checkCollision(Kugel other);
 
 
     void zeichnen();
-    void Schnittpunkt(int i);
+//    void Schnittpunkt(int i);
     void Lotschnittpunkt(int i);
     void Kollision(int i);
 };

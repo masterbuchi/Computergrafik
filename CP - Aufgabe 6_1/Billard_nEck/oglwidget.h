@@ -60,10 +60,10 @@ protected:
 protected:
 
     // Anzahl der Ecken;
-    int Ecken=3;
+    int Ecken=4;
 
     // Größe des Feldes
-    int s = 10;
+    double s = 10;
 
 
     // Winkel in Radian
