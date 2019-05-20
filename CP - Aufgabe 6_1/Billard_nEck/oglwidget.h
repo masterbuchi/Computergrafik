@@ -57,13 +57,11 @@ protected:
     void Tisch();
     void SetMaterialColor(int side, double r, double g, double b);
 
-protected:
+public:
 
     // Anzahl der Ecken;
-    int Ecken=3;
-
-    // Größe des Feldes
-    double s = 10;
+    int Ecken=90;
+    int s = 10;
 
 
     // Winkel in Radian

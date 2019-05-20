@@ -52,8 +52,14 @@
       </item>
       <item row="1" column="0">
        <widget class="QDial" name="unfold">
+        <property name="minimum">
+         <number>0</number>
+        </property>
         <property name="maximum">
          <number>30</number>
+        </property>
+        <property name="value">
+         <number>5</number>
         </property>
         <property name="wrapping">
          <bool>false</bool>
@@ -70,6 +76,9 @@
         </property>
         <property name="maximum">
          <number>90</number>
+        </property>
+        <property name="value">
+         <number>-70</number>
         </property>
         <property name="wrapping">
          <bool>true</bool>

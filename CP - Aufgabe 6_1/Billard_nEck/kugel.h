@@ -11,12 +11,11 @@ class Kugel
 {
 public:
 
-    Kugel(double px, double py, double pz, double masse, double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
+    Kugel(double px, double py, double pz, double masse, double radius, int Ecken, double rot_rad, int s, int nr_lat = 90, int nr_lon = 90)
     {
 
-
         this->px = px;
-        this->py = py;
+        this->py = radius;
         this->pz = pz;
         this->rad = radius;
         this->mass = masse;
@@ -65,7 +64,7 @@ public:
 
     int Ecken;
     double rot_rad;
-    double s;
+    int s;
 
     // BESCHLEUNIGUNG
     double ax;
@@ -92,7 +91,7 @@ public:
     void update(Kugel other, double rotx, double rotz, double dt);
 
 
-    bool checkCollision(Kugel other);
+    bool KollisionKugel(Kugel other);
 
 
     void zeichnen();

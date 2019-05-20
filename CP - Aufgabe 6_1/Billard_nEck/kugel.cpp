@@ -15,15 +15,11 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
     this-> dt = dt;
 
 
-
     ax = -sin((rotz*PI/180));
     az = -sin((rotx*PI/180));
 
 
-
     glPushMatrix();
-
-    glTranslated(px,rad,pz);
 
     for (int i=0; i<Ecken; i++)
 
@@ -34,7 +30,6 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
 
     zeichnen();
 
-
     glPopMatrix();
 
     dx += ax*dt;
@@ -42,17 +37,23 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
     dz += az*dt;
     dz *= 0.99;
 
+
 }
 
-//  //Returns true if the circles are touching, or false if they are not
 
-//bool Kugel::checkCollision(Kugel other)
-//{
-//    double dx = other.px - px+vx;
-//    double dy = other.pz - pz+vz;
-//    double radii = radius + other.radius;
-//    return ((dx*dx)+(dy*dy)<radii*radii) ? true : false;
-//}
+bool Kugel::KollisionKugel(Kugel other)
+{
+    double zw1 = pow(px+dx-other.px,2);
+    double zw2 = pow(pz+dz-other.pz,2);
+    double diff = sqrt(zw1+zw2);
+    double radien = rad + other.rad;
+    if (diff <= radien) {
+        return true;
+    }else {
+        return false;
+    }
+
+}
 
 
 
@@ -166,9 +167,6 @@ void Kugel::zeichnen()
         }
         glEnd() ;
     }
-
-
-
 
 }
 

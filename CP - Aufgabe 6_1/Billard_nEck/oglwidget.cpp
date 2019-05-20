@@ -7,8 +7,8 @@
 // Kugel(double px, double py, double pz, double masse, double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(0,0,0,1,1,Ecken,rot_rad,s)),
-      kugel_2(Kugel(0,0,0,1,2,Ecken,rot_rad,s))
+      kugel_1(Kugel(3,0,0,1,1,Ecken,rot_rad,s)),
+      kugel_2(Kugel(0,0,0,1,1,Ecken,rot_rad,s))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -19,6 +19,9 @@ OGLWidget::OGLWidget(QWidget *parent)
 
     animstep = 0;
     zoom = 100;
+    rotx=-70;
+    unfold = 5;
+
 }
 
 OGLWidget::~OGLWidget()
@@ -101,6 +104,7 @@ void OGLWidget::initializeGL()
 void OGLWidget::resizeGL(int w, int h)
 {
 
+    glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -110,7 +114,7 @@ void OGLWidget::resizeGL(int w, int h)
 
 void OGLWidget::paintGL()
 {
-
+  dt = unfold/200;
     // Clear the scene
     glClearColor(0.f, 0.f, 0.f, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -120,42 +124,60 @@ void OGLWidget::paintGL()
     glLoadIdentity();
     glOrtho(-10, 10, -10, 10, 0, 200);
 
+    // Prepare model matrix
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
 
 
-    glTranslated(0,0,-10);
+   glTranslated(0,0,-10);
 
 
-    glPushMatrix();
+//    double glGetDoublev(GL_MATRIX_MODE);
+//   std::cout << glGetDoublev << std::endl;
+
+
+
+//   // Change light position
+//   float light_pos[] = { 0,
+//                         1.0f,
+//                         0, 0.f };
+//    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
+
+
+        // Change light position
+        float light_pos[] = { 10.f * cosf(animstep*PIf/180.f),
+                              10.f,
+                              10.0f * sinf(animstep*PIf/180.f), 0.f };
+        glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
     // Apply rotation angles
     glRotated(-rotx, 1.0, 0.0, 0.0); // Rotate around x axis
     glRotated(-roty, 0.0, 1.0, 0.0); // Rotate around y axis
     glRotated(rotz, 0.0, 0.0, 1.0); // Rotate around z axis
 
-    // Change light position
-    float light_pos[] = { 10.f * cosf(animstep*PIf/180.f),
-                          10.f,
-                          10.0f * sinf(animstep*PIf/180.f), 0.f };
-    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
-    dt = unfold/200;
+
 
     //Apply scaling
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
 
+     Tisch();
 
-    kugel_1.update(kugel_2, rotx, rotz, dt);
 
 
     kugel_2.update(kugel_1, rotx, rotz, dt);
 
+    kugel_1.update(kugel_2, rotx, rotz, dt);
 
-    Tisch();
+    //kugel_1.zeichnen();
 
 
-    glPopMatrix();
+
+
+
+
 }
 
 
