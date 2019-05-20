@@ -1,7 +1,7 @@
 #include "oglwidget.h"
-#include "vec3.hpp"
+#include "vector3.h"
 #include <cmath>
-
+#include <iostream>
 
 
 OGLWidget::OGLWidget(QWidget *parent)
@@ -70,9 +70,9 @@ void OGLWidget::initializeGL()
     glLoadIdentity();
     glClearColor(0,0,0,0);
     glEnable(GL_DEPTH_TEST);
-//    glEnable(GL_LIGHT0);
-//    glEnable(GL_LIGHTING);
-//    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    //    glEnable(GL_LIGHT0);
+    //    glEnable(GL_LIGHTING);
+    //    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
 
 }
@@ -127,10 +127,12 @@ void OGLWidget::Pyramide() {
         // Jeweiliges Dreieck
         glBegin(GL_TRIANGLES);
 
-
+        int cx = rand();
+        int cy = rand();
+        int cz = rand();
 
         // Farbe
-        glColor3f(0.0f, 0.0f, 1.0f);
+        glColor3f((cx % 100) / 100.f ,(cy % 100) / 100.f ,(cz % 100) / 100.f );
         //Normalenvektor
         glNormal3d(0,0,0);
         //Mittelpunkt
@@ -148,7 +150,7 @@ void OGLWidget::Pyramide() {
         glEnd();
 
 
-        glColor3f(0.7f / i,0.9f/i, 0.0f);
+        glColor3f((cx % 100) / 100.f ,(cy % 100) / 100.f ,(cz % 100) / 100.f );
         //Pyramidenspitze
         glBegin(GL_TRIANGLES);
 

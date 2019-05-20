@@ -118,11 +118,6 @@ bool Kugel::CheckKollisionKugel(Kugel other)
 
     double radien = rad + other.rad;
     if (diff < 1.01*radien) {
-
-        std::cout << diff_y << std::endl;
-        std::cout << diff_rad << std::endl;
-        std::cout << diff << std::endl;
-
         return true;
     }else {
         return false;
@@ -140,7 +135,7 @@ void Kugel::Lotschnittpunkt(int i) {
     double lam2 = (pz - s*cos(i*rot_rad) + lam*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)));
 
 
-    // Schnittpunkt
+    // Lotschnittpunkt
     lot_sx = px + lam2 * -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
     lot_sz = pz + lam2 * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
 
@@ -153,33 +148,26 @@ void Kugel::Kollision(int i) {
     double normx = -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
     double normz = s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
 
-
-    //    Schnittpunkt(i);
-
     Lotschnittpunkt(i);
 
-    //    // Zwischenrechnung
-    //    double x_2 = pow((px-sx),2);
-    //    double z_2 = pow((pz-sz),2);
-
-    //    // Berechnung des Abstands zwischen Kreismittelpunkt und Schnittpunkt mit der jeweiligen Geraden
-    //    double abstand = sqrt(x_2 + z_2);
-
+    // Zwischenrechnung
     double lpx = pow(px-lot_sx,2);
     double lpz = pow(pz-lot_sz,2);
 
+    // Abstand zwischen p und Lotschnittpunkt
     double abstand_lot = sqrt(lpx + lpz);
 
+    // Richtung des Lotvektors
     double lotrichtung = (lot_sx-px)*dx + (lot_sz-pz)* dz;
-
 
 
     // Wenn der Kugelrand gegen den Lotpunkt kommt
     if (abstand_lot<rad && lotrichtung > 0) {
 
+
+        // Zwischenrechnung
         double powx = pow(normx,2);
         double powz = pow(normz,2);
-
         double bruch = 2/(powx+powz);
 
         // Zwischenspeichern der alten dx und dz-Werte
@@ -189,18 +177,11 @@ void Kugel::Kollision(int i) {
         // Berechnung der neuen Werte
         dx = ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t);
         dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
-
     }
-
-
-
-
 }
 
 void Kugel::zeichnen()
 {
-
-
     glColor3f( 1.0f, 1.0f, 0.0f );
 
     // Angle delta in both directions
@@ -223,7 +204,7 @@ void Kugel::zeichnen()
             glNormal3f( xn1, yn1, zn1 );
 
             // Nächster Punkt
-            glVertex3f( px+rad*xn1, py+rad*yn1, pz+rad*zn1 );
+            glVertex3f( float(px)+float(rad)*xn1, float(py)+float(rad)*yn1, float(pz)+float(rad)*zn1 );
 
             float xn2 = cosf( lat ) * sinf( lon + lon_delta );
             float yn2 = sinf( lat ) * sinf( lon + lon_delta );
@@ -233,11 +214,10 @@ void Kugel::zeichnen()
             glNormal3f( xn2, yn2, zn2 );
 
             // Nächster Punkt
-            glVertex3f( px+rad*xn2, py+rad*yn2, pz+rad*zn2 );
+            glVertex3f( float(px)+float(rad)*xn2, float(py)+float(rad)*yn2, float(pz)+float(rad)*zn2 );
         }
         glEnd() ;
     }
-
 }
 
 

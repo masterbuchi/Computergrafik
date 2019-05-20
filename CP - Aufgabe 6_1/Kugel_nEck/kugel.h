@@ -15,7 +15,7 @@ public:
     {
 
         this->px = px;
-        this->py = radius;
+        this->py = py;
         this->pz = pz;
         this->rad = radius;
         this->masse = masse;
@@ -24,6 +24,9 @@ public:
         this->Ecken = Ecken;
         this->rot_rad = rot_rad;
         this->s = s;
+
+        this->py = radius;
+
 
         //        this->initpx = px;
         //        this->initpy = py;
@@ -82,8 +85,6 @@ public:
     //Lotschnittpunkt Koordinaten
     double lot_sx;
     double lot_sz;
-
-    double g = 9.81;
 
     double PI = 3.1415;
     float PIf = 3.1414f;

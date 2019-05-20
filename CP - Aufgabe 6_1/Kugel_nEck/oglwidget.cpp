@@ -1,5 +1,5 @@
 #include "oglwidget.h"
-#include "vec3.hpp"
+#include "vector3.h"
 #include <cmath>
 #include <iostream>
 
