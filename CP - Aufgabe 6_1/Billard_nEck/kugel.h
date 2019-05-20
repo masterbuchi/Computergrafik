@@ -18,7 +18,7 @@ public:
         this->py = radius;
         this->pz = pz;
         this->rad = radius;
-        this->mass = masse;
+        this->masse = masse;
         this->nr_lat = nr_lat;
         this->nr_lon = nr_lon;
         this->Ecken = Ecken;
@@ -56,7 +56,7 @@ public:
 
     //Daten Kugel
     double rad;
-    double mass;
+    double masse;
     int nr_lat;
     int nr_lon;
 
@@ -91,7 +91,7 @@ public:
     void update(Kugel other, double rotx, double rotz, double dt);
 
 
-    bool KollisionKugel(Kugel other);
+    bool CheckKollisionKugel(Kugel other);
 
 
     void zeichnen();

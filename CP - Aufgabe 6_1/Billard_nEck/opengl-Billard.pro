@@ -16,11 +16,11 @@ SOURCES += main.cpp\
     kugel.cpp \
         mainwindow.cpp \
     oglwidget.cpp \
-    vec3.cpp
+    vector3.cpp
 
 HEADERS  += mainwindow.h \
     kugel.h \
     oglwidget.h \
-    vec3.hpp
+    vector3.h
 
 FORMS    += mainwindow.ui

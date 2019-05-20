@@ -76,7 +76,6 @@ public:
 
     // ZEIT
     double dt;
-
     double g = 9.81;
 
    double PI = 3.1415;

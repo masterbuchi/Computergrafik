@@ -4,11 +4,11 @@
 #include <iostream>
 
 
-// Kugel(double px, double py, double pz, double masse, double radius, int Ecken, double rot_rad, double s, int nr_lat = 90, int nr_lon = 90)
+// Kugel(px, py, pz, masse, radius, Ecken, rot_rad, s)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(3,0,0,1,1,Ecken,rot_rad,s)),
-      kugel_2(Kugel(0,0,0,1,1,Ecken,rot_rad,s))
+      kugel_1(Kugel(3,0,0,40,1.5,Ecken,rot_rad,s)),
+      kugel_2(Kugel(0,0,-5,1,1,Ecken,rot_rad,s))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -19,8 +19,8 @@ OGLWidget::OGLWidget(QWidget *parent)
 
     animstep = 0;
     zoom = 100;
-    rotx=-70;
-    unfold = 5;
+    rotx=-45;
+    unfold = 15;
 
 }
 
@@ -130,11 +130,7 @@ void OGLWidget::paintGL()
 
 
 
-   glTranslated(0,0,-10);
-
-
-//    double glGetDoublev(GL_MATRIX_MODE);
-//   std::cout << glGetDoublev << std::endl;
+   glTranslated(0,0,-15);
 
 
 
@@ -170,13 +166,6 @@ void OGLWidget::paintGL()
     kugel_2.update(kugel_1, rotx, rotz, dt);
 
     kugel_1.update(kugel_2, rotx, rotz, dt);
-
-    //kugel_1.zeichnen();
-
-
-
-
-
 
 }
 

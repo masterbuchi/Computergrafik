@@ -1,5 +1,5 @@
 #include "kugel.h"
-#include "vec3.hpp"
+#include "vector3.h"
 #include <cmath>
 #include <iostream>
 #include "oglwidget.h"
@@ -28,9 +28,68 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
 
     }
 
+
+    // Neuer Punkt wird bestimmt
+    px += dx*dt;
+    pz += dz*dt;
+
+    // AB HIER WIRD MIT DER VEKTORKLASSE GEARBEITET, WEIL DAS OHNE ECHT NICHT GEHT.
+
+    // Kollision mit anderer Kugel
+
+    // Geschwindigkeitsvektoren
+    Vector3 geschw = Vector3(dx, 0, dz);
+    Vector3 geschw_other = Vector3(other.dx, 0, other.dz);
+
+    //Normalvektor der Ebene
+    Vector3 norm = Vector3(px-other.px, 0, pz-other.pz);
+
+    // Normalvektor normieren
+    norm.normalize();
+
+    // Wenn Kugeln sich aufeinander zubewegen
+
+    if (Vector3(other.px-px, 0, other.pz-pz).dot(Vector3(geschw.x-geschw_other.x, 0, geschw.z-geschw_other.z)) > 0 && CheckKollisionKugel(other)) {
+
+        // Berechnung der Massen und ds (in den Formeln vs)
+        double gesamtmasse = masse+other.masse;
+        double dsx = (dx*masse + other.dx*other.masse) / gesamtmasse;
+        double dsz = (dz*masse + other.dz*other.masse) / gesamtmasse;
+
+        // Berechnung vom neuen dx und dz
+        dx -= dsx;
+        dz -= dsz;
+
+        other.dx -= dsx;
+        other.dz -= dsz;
+
+        double powx = pow(norm.x,2);
+        double powz = pow(norm.z,2);
+
+        double bruch = 2/(powx+powz);
+
+        // Zwischenspeichern der alten dx und dz-Werte
+        double dx_t = dx;
+        double dz_t = dz;
+
+        // Berechnung der neuen Werte
+        dx = ((1-bruch*powx)*dx_t+(0-(bruch*norm.x*norm.z))*dz_t);
+        dz = ((0-bruch*norm.x*norm.z)*dx_t+(1-bruch*powz)*dz_t);
+
+        dx += dsx;
+        dz += dsz;
+
+        other.dx += dsx;
+        other.dz += dsz;
+
+
+
+    }
+
+
     zeichnen();
 
-    glPopMatrix();
+
 
     dx += ax*dt;
     dx *= 0.99;
@@ -38,24 +97,38 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
     dz *= 0.99;
 
 
+    glPopMatrix();
+
+
 }
 
 
-bool Kugel::KollisionKugel(Kugel other)
+bool Kugel::CheckKollisionKugel(Kugel other)
 {
-    double zw1 = pow(px+dx-other.px,2);
-    double zw2 = pow(pz+dz-other.pz,2);
-    double diff = sqrt(zw1+zw2);
+
+    //
+    double zw1 = pow(px+-other.px,2);
+    double zw2 = pow(pz+-other.pz,2);
+    double diff_y = zw1+zw2;
+
+    double diff_rad = pow(rad - other.rad,2);
+
+    double diff = sqrt(diff_y + diff_rad);
+
+
     double radien = rad + other.rad;
-    if (diff <= radien) {
+    if (diff < 1.01*radien) {
+
+        std::cout << diff_y << std::endl;
+        std::cout << diff_rad << std::endl;
+        std::cout << diff << std::endl;
+
         return true;
     }else {
         return false;
     }
 
 }
-
-
 
 
 void Kugel::Lotschnittpunkt(int i) {
@@ -120,9 +193,6 @@ void Kugel::Kollision(int i) {
     }
 
 
-    // Neuer Punkt wird bestimmt
-    px += dx*dt;
-    pz += dz*dt;
 
 
 }
@@ -171,51 +241,5 @@ void Kugel::zeichnen()
 }
 
 
-//    // ANDERE KUGEL
-//    if (checkCollision(other)) {
-//        std::cout << "collision" << std::endl;
-
-//        Vector3 pos = Vector3(px, 0, pz);
-//        Vector3 other_pos = Vector3(other.px, 0, other.pz);
-//        Vector3 velocity = Vector3(vx, 0, vz);
-//        Vector3 other_velocity = Vector3(other.vx, 0, other.vz);
-
-//        Vector3 collisionNormal = Vector3(px-other.px, 0, pz-other.pz);
-//        collisionNormal.normalize(); // normalvector der kollisionsebene
-
-//        // bewegen sich die kugeln aufeinander zu dann löse kollision auf
-//        if (Vector3(other.px-px, 0, other.pz-pz).dotProduct(Vector3(velocity.x-other_velocity.x, 0, velocity.z-other_velocity.z)) > 0) {
-
-//            double totalmass = mass+other.mass;
-//            double vsx = (vx*mass + other.vx*other.mass) / totalmass;
-//            double vsz = (vz*mass + other.vz*other.mass) / totalmass;
-
-//            vx -= vsx; vz -= vsz;
-//            other.vx -= vsx; other.vz -= vsz;
-
-//            double tempvx=vx;
-//            double tempvz=vz;
-
-//            vx=vx-((((collisionNormal.x*collisionNormal.x)*tempvx)+(collisionNormal.z*tempvz*collisionNormal.x))/((collisionNormal.x*collisionNormal.x)+(collisionNormal.z*collisionNormal.z)));
-//            vz=vz-((((collisionNormal.z*collisionNormal.z)*tempvz)+(collisionNormal.z*tempvx*collisionNormal.x))/((collisionNormal.x*collisionNormal.x)+(collisionNormal.z*collisionNormal.z)));
-
-//            vx += vsx; vz += vsz;
-//            other.vx += vsx; other.vz += vsz;
-
-//        }
-//    }
 
 
-
-//void Kugel::Schnittpunkt(int i) {
-
-//    // Berechnung der Lamdas des Schnittpunkt
-//    double lam = -(px + s*sin(i*rot_rad) - (dx*(pz - s*cos(i*rot_rad)))/dz)/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)) - (dx*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz);
-//    double lam2 = -(pz - s*cos(i*rot_rad) + lam*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/dz;
-
-//    // Schnittpunkt
-//    sx = px + lam2  * dx;
-//    sz = pz + lam2 * dz;
-
-
-//}
