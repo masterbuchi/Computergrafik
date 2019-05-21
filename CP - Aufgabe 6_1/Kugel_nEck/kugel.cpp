@@ -21,6 +21,7 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
 
     glPushMatrix();
 
+
     for (int i=0; i<Ecken; i++)
 
     {
@@ -29,9 +30,6 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
     }
 
 
-    // Neuer Punkt wird bestimmt
-    px += dx*dt;
-    pz += dz*dt;
 
     // AB HIER WIRD MIT DER VEKTORKLASSE GEARBEITET, WEIL DAS OHNE ECHT NICHT GEHT.
 
@@ -82,22 +80,26 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
         other.dx += dsx;
         other.dz += dsz;
 
-
-
     }
+
+    // Neuer Punkt wird bestimmt
+    px += dx*dt;
+    pz += dz*dt;
 
 
     zeichnen();
 
-
-
     dx += ax*dt;
-    dx *= 0.99;
+    dx *= 0.95;
     dz += az*dt;
-    dz *= 0.99;
+    dz *= 0.95;
 
 
-    glPopMatrix();
+  glPopMatrix();
+
+
+
+
 
 
 }
@@ -162,7 +164,7 @@ void Kugel::Kollision(int i) {
 
 
     // Wenn der Kugelrand gegen den Lotpunkt kommt
-    if (abstand_lot<rad && lotrichtung > 0) {
+    if (abstand_lot<=rad && lotrichtung > 0) {
 
 
         // Zwischenrechnung
@@ -174,9 +176,15 @@ void Kugel::Kollision(int i) {
         double dx_t = dx;
         double dz_t = dz;
 
-        // Berechnung der neuen Werte
-        dx = ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t);
-        dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
+//        if (((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t) <=0.000000001 && ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t) <= 0.000000001) {
+//            dx = 0;
+//            dz = 0;
+//        } else {
+            // Berechnung der neuen Werte
+            dx = ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t);
+            dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
+//        }
+
     }
 }
 

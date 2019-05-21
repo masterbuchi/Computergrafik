@@ -8,7 +8,7 @@
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
       kugel_1(Kugel(3,0,0,40,1.5,Ecken,rot_rad,s)),
-      kugel_2(Kugel(0,0,-5,1,1,Ecken,rot_rad,s))
+      kugel_2(Kugel(0,0,-2,1,1,Ecken,rot_rad,s))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);

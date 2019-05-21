@@ -60,7 +60,7 @@ protected:
 public:
 
     // Anzahl der Ecken;
-    int Ecken=90;
+    int Ecken=128;
     int s = 10;
 
 
