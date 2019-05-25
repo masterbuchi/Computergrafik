@@ -37,6 +37,15 @@ Vector3 Vector3::operator+(const Vector3& other) {
     return *this;
 }
 
+
+//Vector3 Vector3::operator-(const Vector3& other) {
+//    x -= other.x;
+//    y -= other.y;
+//    z -= other.z;
+
+//    return *this;
+//}
+
 void Vector3::divideAllElementsBy(double i) {
     x /= i;
     y /= i;

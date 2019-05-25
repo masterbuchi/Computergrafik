@@ -12,11 +12,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->yRot, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setRotY(int)));
     connect(ui->zRot, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setRotZ(int)));
 
+
     connect(ui->zoom, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setZoom(int)));
     connect(ui->unfold, SIGNAL(valueChanged(int)), ui->glwidget, SLOT(setUnfold(int)));
 
     // Handle any rotation change requests from mouse dragging and key presses
     connect( ui->glwidget, SIGNAL(changeRotation(int,int,int)), this, SLOT(onChangeRotation(int,int,int)));
+
 }
 
 MainWindow::~MainWindow()

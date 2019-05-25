@@ -15,6 +15,8 @@ public:
     explicit MainWindow(QWidget *parent=nullptr);
     ~MainWindow();
 
+    int width = 1200;
+
 private slots:
     void onChangeRotation( int dx, int dy, int dz );
 

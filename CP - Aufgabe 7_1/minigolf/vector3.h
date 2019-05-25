@@ -21,6 +21,7 @@ public:
 
     Vector3 operator *(const double& i);
     Vector3 operator +(const Vector3 &other);
+//    Vector3 operator -(const Vector3 &other);
     void divideAllElementsBy(double i);
 };
 

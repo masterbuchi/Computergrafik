@@ -7,8 +7,8 @@
 // Kugel(px, py, pz, masse, radius, Kanten, rot_rad, s)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(0,0,0,1,0.5,Kanten, points,rot_rad,s)),
-      kugel_2(Kugel(0,0,-2,1,1,Kanten, points,rot_rad,s))
+      kugel_1(Kugel(2.1,0,3,1,0.5,Kanten, Spalten, zpx, zpz, points)),
+      kugel_2(Kugel(0,0,-100,1,1,Kanten, Spalten, zpx, zpz, points))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -20,8 +20,8 @@ OGLWidget::OGLWidget(QWidget *parent)
     animstep = 0;
     zoom = 100;
     rotx = -30;
-    roty=40;
-    //    unfold = 15;
+    roty= 40;
+    unfold = 15;
 
 }
 
@@ -99,22 +99,27 @@ void OGLWidget::initializeGL()
     // Use the color of an object for light calculation
     glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
     glEnable(GL_COLOR_MATERIAL);
-
 }
 
-void OGLWidget::resizeGL(int w, int h)
+void OGLWidget::resizeGL(int width, int height)
 {
+//        int side = qMin(width, height);
+//            glViewport((width - side) / 2, (height - side) / 2, side, side);
 
-    glViewport(0,0,w,h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+//            glMatrixMode(GL_PROJECTION);
+//            glLoadIdentity();
+//        #ifdef QT_OPENGL_ES_1
+//            glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+//        #else
+//            glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+//        #endif
+//            glMatrixMode(GL_MODELVIEW);
 }
 
 
 void OGLWidget::paintGL()
 {
+
     dt = unfold/200;
     // Clear the scene
     glClearColor(0.f, 0.f, 0.f, 1.0);
@@ -133,61 +138,114 @@ void OGLWidget::paintGL()
 
     glTranslated(0,0,-15);
 
+    // Change light position
+    float light_pos[] = { (float)kugel_1.px,
+                          1.0f,
+                          (float)kugel_1.pz, 0.f };
+    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
 
-       // Change light position
-       float light_pos[] = { 0,
-                             1.0f,
-                             0, 0.f };
-        glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
-
-
-//    // Change light position
-//    float light_pos[] = { 10.f * cosf(animstep*PIf/180.f),
-//                          10.f,
-//                          10.0f * sinf(animstep*PIf/180.f), 0.f };
-//    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
+    //    // Change light position
+    //    float light_pos[] = { 10.f * cosf(animstep*PIf/180.f),
+    //                          10.f,
+    //                          10.0f * sinf(animstep*PIf/180.f), 0.f };
+    //    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
     // Apply rotation angles
     glRotated(-rotx, 1.0, 0.0, 0.0); // Rotate around x axis
     glRotated(-roty, 0.0, 1.0, 0.0); // Rotate around y axis
     glRotated(rotz, 0.0, 0.0, 1.0); // Rotate around z axis
 
-
-
-
     //Apply scaling
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
 
-    // Tisch();
+
 
     Bahn();
+
+
+    Kreis(4,0.1,8,0.2);
+
 
     //    kugel_2.update(kugel_1, rotx, rotz, dt);
 
     kugel_1.update(kugel_2, rotx, rotz, dt);
 
+
+    Pfeil();
+
+
+
 }
 
 
+// Geklaute Methode aus dem Netz
+void OGLWidget::Kreis(double xmp, double ymp, double zmp, double r)
+{
+    double x,z;
+    double y=ymp;
+
+    glBegin(GL_POLYGON); //Begin Polygon coordinates
+    for (double theta=0 ; theta<(2*3.1416) ; theta+=(2*3.1416)/360)
+    {
+        x = xmp+(cos(theta)*r);
+        z = zmp+(sin(theta)*r);
+        glVertex3d(x,y,z);
+    }
+    glEnd();
+}
+
+
+
+void OGLWidget::Pfeil() {
+
+    double mx;
+    double mz;
+
+    if (pos_x < 0) pos_x = 0;
+    if (pos_y < 0) pos_y = 0;
+    if (pos_x > 1200) pos_x = 1200;
+    if (pos_y > 1200) pos_y = 1200;
+
+    if (pos_x == 0 && pos_y == 0) {
+        mx = 0;
+        mz = 0;
+    } else {
+        mx = (kugel_1.px -10) + (pos_x/width) * 20;
+        mz = (kugel_1.pz -10) + (pos_y/width) * 20;
+    }
+
+    glColor3f(0, 1.0, 1.0);
+    glLineWidth(20);
+    glBegin(GL_LINES);
+    glVertex3d(kugel_1.px, kugel_1.rad, kugel_1.pz);
+    glVertex3d(mx, kugel_1.rad,mz);
+    glEnd();
+
+    mdx = mx - kugel_1.px;
+    mdz = mz - kugel_1.pz;
+
+      if (shoot) {
+//        std::cout << "shoot: "<< shoot << std::endl;
+        kugel_1.dx = mdx;
+        kugel_1.dz = mdz;
+        shoot = false;
+        update();
+    }
+
+}
+
+
+
 void OGLWidget::Bahn() {
-
-
 
     //und dann statt matrix[x][y]=5;
     //matrix[x+anzahlSpalten*y]=5;
 
 
 
-    for (int i=0; i<Kanten-1; i++) {
-
-
-        std::cout << "x1 :" << i << points[0+Spalten*i] << std::endl;
-        std::cout << "z1 :" << i << points[1+Spalten*i] << std::endl;
-
-        std::cout << "x2 :" << i << points[0+Spalten*(i+1)] << std::endl;
-        std::cout << "z2 :" << i << points[1+Spalten*(i+1)] << std::endl;
+    for (int i=0; i<Kanten; i++) {
 
         // Kantenstück
         glBegin(GL_QUADS);
@@ -199,14 +257,14 @@ void OGLWidget::Bahn() {
         glVertex3d(points[0+Spalten*i],0,points[1+Spalten*i]);
 
         //Normalenvektor
-        glNormal3d(points[0+Spalten*(i+1)],0,points[1+Spalten*(i+1)]);
+        glNormal3d(points[0+Spalten*((i+1) % Kanten)],0,points[1+Spalten*((i+1) % Kanten)]);
         // Unten Links
-        glVertex3d(points[0+Spalten*(i+1)],0,points[1+Spalten*(i+1)]);
+        glVertex3d(points[0+Spalten*((i+1) % Kanten)],0,points[1+Spalten*((i+1) % Kanten)]);
 
         //Normalenvektor
-        glNormal3d(points[0+Spalten*(i+1)],0.5,points[1+Spalten*(i+1)]);
+        glNormal3d(points[0+Spalten*((i+1) % Kanten)],0.5,points[1+Spalten*((i+1) % Kanten)]);
         // Unten Links
-        glVertex3d(points[0+Spalten*(i+1)],0.5,points[1+Spalten*(i+1)]);
+        glVertex3d(points[0+Spalten*((i+1) % Kanten)],0.5,points[1+Spalten*((i+1) % Kanten)]);
 
         //Normalenvektor
         glNormal3d(points[0+Spalten*i],0.5,points[1+Spalten*i]);
@@ -216,140 +274,48 @@ void OGLWidget::Bahn() {
         glEnd();
     }
 
-    // Letztes Stück
-    // Kantenstück
-    glBegin(GL_QUADS);
-    glColor3d(0.5, 0.0, 0.5);
-
-    //Normalenvektor
-    glNormal3d(points[0+Spalten*(Kanten-1)],0,points[1+Spalten*(Kanten-1)]);
-    // Unten Links
-    glVertex3d(points[0+Spalten*(Kanten-1)],0,points[1+Spalten*(Kanten-1)]);
-
-    //Normalenvektor
-    glNormal3d(points[0],0,points[1]);
-    // Unten Links
-    glVertex3d(points[0],0,points[1]);
-
-    //Normalenvektor
-    glNormal3d(points[0],0.5,points[1]);
-    // Unten Links
-    glVertex3d(points[0],0.5,points[1]);
-
-    //Normalenvektor
-    glNormal3d(points[0+Spalten*(Kanten-1)],0.5,points[1+Spalten*(Kanten-1)]);
-    // Unten Links
-    glVertex3d(points[0+Spalten*(Kanten-1)],0.5,points[1+Spalten*(Kanten-1)]);
-
-    glEnd();
-
 }
 
 
+void OGLWidget::mousePressEvent(QMouseEvent *event)
+{
+    // Upon mouse pressed, we store the current position...
+    lastpos = event->pos();
+}
 
 
-//    //Normalenvektor
-//    glNormal3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
-//    // Unten Links
-//    glVertex3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
+void OGLWidget::mouseReleaseEvent(QMouseEvent *event)
+{
 
-//    //Normalenvektor
-//    glNormal3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad));
-//    // Unten Rechts
-//    glVertex3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad) );
-
-//    //Normalenvektor
-//    glNormal3d(s * -sin((i+1)*rot_rad),0.5 , s * cos((i+1)*rot_rad));
-//    // Oben Rechts
-//    glVertex3d(s * -sin((i+1)*rot_rad),0.5 , s * cos((i+1)*rot_rad) );
-
-//    //Normalenvektor
-//    glNormal3d(s * -sin(i*rot_rad), 0.5, s * cos(i*rot_rad));
-//    // Oben Links
-//    glVertex3d(s * -sin(i*rot_rad), 0.5, s * cos(i*rot_rad));
-
-
-void OGLWidget::Tisch() {
-
-
-    // For-Schleife für alle Dreiecke, werden durch i gedreht
-    for (int i=0; i<Kanten; i++)
-    {
-        // Jeweiliges Dreieck
-        glBegin(GL_TRIANGLES);
-        // Farbe (hellgrau)
-        glColor3d(0.8, 0.8, 0.8);
-
-        //Normalenvektor
-        glNormal3d(0,0,0);
-        //Mittelpunkt
-        glVertex3d(0, 0, 0);
-
-        //Normalenvektor
-        glNormal3d(-sin(i*rot_rad), 0 ,cos(i*rot_rad));
-        //Punkt Außen auf Z nach Vorne
-        glVertex3d(s * -sin(i*rot_rad), 0 , s * cos(i*rot_rad));
-
-
-        //Normalenvektor
-        glNormal3d(-sin((i+1)*rot_rad), 0 ,cos((i+1)*rot_rad));
-        //Rotationspunkt
-        glVertex3d(s * -sin((i+1)*rot_rad), 0 , s * cos((i+1)*rot_rad));
-        glEnd();
-
-        // Mantelstück
-        glBegin(GL_QUADS);
-        glColor3d(0.5, 0.0, 0.5);
-
-        //Normalenvektor
-        glNormal3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
-        // Unten Links
-        glVertex3d(s * -sin(i*rot_rad), 0, s * cos(i*rot_rad));
-
-        //Normalenvektor
-        glNormal3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad));
-        // Unten Rechts
-        glVertex3d(s * -sin((i+1)*rot_rad),0,  s * cos((i+1)*rot_rad) );
-
-        //Normalenvektor
-        glNormal3d(s * -sin((i+1)*rot_rad),0.5 , s * cos((i+1)*rot_rad));
-        // Oben Rechts
-        glVertex3d(s * -sin((i+1)*rot_rad),0.5 , s * cos((i+1)*rot_rad) );
-
-        //Normalenvektor
-        glNormal3d(s * -sin(i*rot_rad), 0.5, s * cos(i*rot_rad));
-        // Oben Links
-        glVertex3d(s * -sin(i*rot_rad), 0.5, s * cos(i*rot_rad));
-        glEnd();
-
+    if (event->button() == Qt::LeftButton && !shoot) {
+        shoot = true;
+        Pfeil();
     }
-
-
 }
 
 
+void OGLWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    // ... and while moving, we calculate the dragging deltas
+    // Left button: Rotating around x and y axis
+    pos_x = (event->buttons() & Qt::LeftButton) ? event->x() : 0;
+    pos_y = (event->buttons() & Qt::LeftButton) ? event->y() : 0;
 
-//void OGLWidget::mousePressEvent(QMouseEvent *event)
-//{
-//    // Upon mouse pressed, we store the current position...
-//    lastpos = event->pos();
-//}
 
-//void OGLWidget::mouseMoveEvent(QMouseEvent *event)
-//{
-//    // ... and while moving, we calculate the dragging deltas
-//    // Left button: Rotating around x and y axis
-//    int dx = (event->buttons() & Qt::LeftButton) ? lastpos.y() - event->y() : 0;
-//    int dy = lastpos.x() - event->x();
-//    // Right button: Rotating around z and y axis
-//    int dz = (event->buttons() & Qt::RightButton) ? lastpos.y() - event->y() : 0;
+    //    // Right button: Rotating around z and y axis
+    //    pos_z = (event->buttons() & Qt::RightButton) ? event->y() : 0;
 
-//    // Now let the world know that we want to rotate
-//    emit changeRotation( dx, dy, dz );
 
-//    // Make the current position the starting point for the next dragging step
-//    lastpos = event->pos();
-//}
+//    std::cout << "pos_x: "<< pos_x << std::endl;
+//    std::cout << "pos_y: "<< pos_y << std::endl;
+//    std::cout << "pos_z: "<< pos_z << std::endl;
+
+
+
+
+    // Make the current position the starting point for the next dragging step
+    lastpos = event->pos();
+}
 
 void OGLWidget::keyPressEvent(QKeyEvent *event)
 {
@@ -390,9 +356,3 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
 }
-
-
-
-// s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * dx;
-// s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad)) = pz + lam2 * dz;
-

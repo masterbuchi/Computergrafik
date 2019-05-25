@@ -8,8 +8,6 @@
 
 void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
 
-
-
     this -> rotx = rotx;
     this -> rotz = rotz;
     this-> dt = dt;
@@ -22,16 +20,44 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
     glPushMatrix();
 
 
-//    for (int i=0; i<Kanten; i++)
-
-//    {
-//        Kollision(i);
-
-//    }
 
 
+    for (int i=0; i<Kanten; i++)
 
-    // AB HIER WIRD MIT DER VEKTORKLASSE GEARBEITET, WEIL DAS OHNE ECHT NICHT GEHT.
+    {
+
+        KollisionmitWand(i);
+
+    }
+
+    CheckKollisionKugel(other);
+
+    Ende();
+
+
+    // Neuer Punkt wird bestimmt
+    px += dx*dt;
+    pz += dz*dt;
+
+    Zeichnen();
+
+    //    dx += ax*dt;
+    dx *= 0.95;
+
+
+    //    dz += az*dt;
+    dz *= 0.95;
+
+
+
+    glPopMatrix();
+
+
+}
+
+
+void Kugel::CheckKollisionKugel(Kugel other)
+{
 
     // Kollision mit anderer Kugel
 
@@ -45,9 +71,19 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
     // Normalvektor normieren
     norm.normalize();
 
-    // Wenn Kugeln sich aufeinander zubewegen
+    double zw1 = pow(px+-other.px,2);
+    double zw2 = pow(pz+-other.pz,2);
+    double diff_y = zw1+zw2;
 
-    if (Vector3(other.px-px, 0, other.pz-pz).dot(Vector3(geschw.x-geschw_other.x, 0, geschw.z-geschw_other.z)) > 0 && CheckKollisionKugel(other)) {
+    double diff_rad = pow(rad - other.rad,2);
+
+    double diff = sqrt(diff_y + diff_rad);
+
+
+    double radien = rad + other.rad;
+
+    // Wenn Kugeln sich aufeinander zubewegen
+    if ((diff < 1.01*radien) && Vector3(other.px-px, 0, other.pz-pz).dot(Vector3(geschw.x-geschw_other.x, 0, geschw.z-geschw_other.z)) > 0) {
 
         // Berechnung der Massen und ds (in den Formeln vs)
         double gesamtmasse = masse+other.masse;
@@ -82,113 +118,116 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
 
     }
 
-    // Neuer Punkt wird bestimmt
-    px += dx*dt;
-    pz += dz*dt;
-
-
-    zeichnen();
-
-    dx += ax*dt;
-    dx *= 0.95;
-    dz += az*dt;
-    dz *= 0.95;
-
-
-  glPopMatrix();
-
-
-
-
-
-
 }
 
 
-bool Kugel::CheckKollisionKugel(Kugel other)
-{
+void Kugel::Lotschnittpunkt() {
 
-    //
-    double zw1 = pow(px+-other.px,2);
-    double zw2 = pow(pz+-other.pz,2);
-    double diff_y = zw1+zw2;
+    double lam = -(ov.x*rv.z - ov.z*rv.x - px*rv.z + pz*rv.x)/(norm.z*rv.x - norm.x*rv.z);
 
-    double diff_rad = pow(rad - other.rad,2);
-
-    double diff = sqrt(diff_y + diff_rad);
-
-
-    double radien = rad + other.rad;
-    if (diff < 1.01*radien) {
-        return true;
-    }else {
-        return false;
-    }
-
-}
-
-
-void Kugel::Lotschnittpunkt(int i) {
-
-    // s * -sin(i*rot_rad) + lam * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad)) = px + lam2 * -(s * (cos((i+1)*rot_rad) - cos( i * rot_rad)));
-    // double lam2 = ((s * cos(i*rot_rad) + lam * s * (cos((i+1)*rot_rad) - cos( i * rot_rad))) - pz)  / (s * (-sin((i+1)*rot_rad) + sin( i * rot_rad))) ;
-
-    double lam = -(s - pz*cos(i*rot_rad) + px*sin(i*rot_rad) - s*cos(rot_rad) + pz*cos(rot_rad*(i + 1)) - px*sin(rot_rad*(i + 1)))/(2*s*(cos(rot_rad) - 1));
-    double lam2 = (pz - s*cos(i*rot_rad) + lam*s*(cos(i*rot_rad) - cos(rot_rad*(i + 1))))/(s*(sin(rot_rad*(i + 1)) - sin(i*rot_rad)));
-
+    double lam2 = -(norm.z*ov.x - norm.x*ov.z - norm.z*px + norm.x*pz)/(norm.z*rv.x - norm.x*rv.z);
 
     // Lotschnittpunkt
-    lot_sx = px + lam2 * -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
-    lot_sz = pz + lam2 * s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
+    lot_s = Vector3((px + lam * norm.x), 0, (pz + lam * norm.z));
+    lot_s = Vector3((ov.x + lam2 * rv.x), 0, (ov.z + lam2 * rv.z));
 
 
 }
-void Kugel::Kollision(int i) {
+void Kugel::KollisionmitWand(int i) {
 
 
-    // NormalvektorKoordinaten
-    double normx = -s * (cos((i+1)*rot_rad) - cos( i * rot_rad));
-    double normz = s * (-sin((i+1)*rot_rad) + sin( i * rot_rad));
+    ov = Vector3(points[0+Spalten*i],0,points[1+Spalten*i]);
+    ov2 = Vector3(points[0+Spalten*((i+1) % (Kanten))],0,points[1+Spalten*((i+1) % (Kanten))]);
+    rv = Vector3(ov2.x - ov.x,0,ov2.z-ov.z);
 
-    Lotschnittpunkt(i);
+    // Normalvektor
+    norm = Vector3(-rv.z,0,rv.x);
+
+    Lotschnittpunkt();
 
     // Zwischenrechnung
-    double lpx = pow(px-lot_sx,2);
-    double lpz = pow(pz-lot_sz,2);
+    double lpx = pow(px-lot_s.x,2);
+    double lpz = pow(pz-lot_s.z,2);
 
     // Abstand zwischen p und Lotschnittpunkt
     double abstand_lot = sqrt(lpx + lpz);
 
     // Richtung des Lotvektors
-    double lotrichtung = (lot_sx-px)*dx + (lot_sz-pz)* dz;
+    double lotrichtung = (lot_s.x-px)*dx + (lot_s.z-pz)* dz;
 
+    if ( ((lot_s.x >= ov.x) && (lot_s.x < ov2.x)) ||
+         ((lot_s.x <= ov.x) && (lot_s.x > ov2.x)) ||
+         ((lot_s.z >= ov.z) && (lot_s.z < ov2.z)) ||
+         ((lot_s.z <= ov.z) && (lot_s.z > ov2.z)) )
+    {
+        // Wenn der Kugelrand gegen den Lotpunkt kommt
+        if (abstand_lot<=rad && lotrichtung > 0) {
+            // Zwischenrechnung
+            double powx = pow(norm.x,2);
+            double powz = pow(norm.z,2);
+            double bruch = 2/(powx+powz);
 
-    // Wenn der Kugelrand gegen den Lotpunkt kommt
-    if (abstand_lot<=rad && lotrichtung > 0) {
+            // Zwischenspeichern der alten dx und dz-Werte
+            double dx_t = dx;
+            double dz_t = dz;
 
-
-        // Zwischenrechnung
-        double powx = pow(normx,2);
-        double powz = pow(normz,2);
-        double bruch = 2/(powx+powz);
-
-        // Zwischenspeichern der alten dx und dz-Werte
-        double dx_t = dx;
-        double dz_t = dz;
-
-//        if (((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t) <=0.000000001 && ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t) <= 0.000000001) {
-//            dx = 0;
-//            dz = 0;
-//        } else {
             // Berechnung der neuen Werte
-            dx = ((1-bruch*powx)*dx_t+(0-(bruch*normx*normz))*dz_t);
-            dz = ((0-bruch*normx*normz)*dx_t+(1-bruch*powz)*dz_t);
-//        }
+            dx = ((1-bruch*powx)*dx_t+(0-(bruch*norm.x*norm.z))*dz_t);
+            dz = ((0-bruch*norm.x*norm.z)*dx_t+(1-bruch*powz)*dz_t);
+        }
+    } else if ( ((lot_s.x <= ov.x) && (lot_s.x+rad >= ov.x)) ||
+                ((lot_s.x >= ov.x) && (lot_s.x-rad <= ov.x)) ||
+                ((lot_s.x <= ov2.x) && (lot_s.x+rad >= ov2.x)) ||
+                ((lot_s.x >= ov2.x) && (lot_s.x-rad <= ov2.x)) ||
 
+                ((lot_s.z <= ov.z) && (lot_s.z+rad >= ov.z)) ||
+                ((lot_s.z >= ov.z) && (lot_s.z-rad <= ov.z)) ||
+                ((lot_s.z <= ov2.z) && (lot_s.z+rad >= ov2.z)) ||
+                ((lot_s.z >= ov2.z) && (lot_s.z-rad <= ov2.z))) {
+
+        norm = Vector3(px-ov2.x,0,pz-ov2.z);
+
+        double abstand_k_e = Vector3(px,0,pz).getDistanceTo(Vector3(ov2.x,0,ov2.z));
+
+        // Wenn der Kugelrand gegen den Lotpunkt kommt
+        if (abstand_k_e<=rad && lotrichtung > 0) {
+
+
+            // Zwischenrechnung
+            double powx = pow(norm.x,2);
+            double powz = pow(norm.z,2);
+            double bruch = 2/(powx+powz);
+
+            // Zwischenspeichern der alten dx und dz-Werte
+            double dx_t = dx;
+            double dz_t = dz;
+
+            // Berechnung der neuen Werte
+            dx = ((1-bruch*powx)*dx_t+(0-(bruch*norm.x*norm.z))*dz_t);
+            dz = ((0-bruch*norm.x*norm.z)*dx_t+(1-bruch*powz)*dz_t);
+
+        }
     }
 }
 
-void Kugel::zeichnen()
+void Kugel::Ende() {
+
+    double abstandZiel = Vector3(px,0,pz).getDistanceTo(Vector3(zpx,0,zpz));
+
+    if ( abstandZiel < 0.1) {
+        dx = 0;
+        dz = 0;
+        if (!win) {
+            std::cout << "Gewonnen! "<< std::endl;
+            win = true;
+        }
+    }
+}
+
+
+
+
+void Kugel::Zeichnen()
 {
     glColor3f( 1.0f, 1.0f, 0.0f );
 
@@ -224,8 +263,8 @@ void Kugel::zeichnen()
             // Nächster Punkt
             glVertex3f( float(px)+float(rad)*xn2, float(py)+float(rad)*yn2, float(pz)+float(rad)*zn2 );
         }
-        glEnd() ;
     }
+    glEnd() ;
 }
 
 
