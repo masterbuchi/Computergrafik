@@ -7,7 +7,7 @@
 // Kugel(px, py, pz, masse, radius, Kanten, rot_rad, s)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(2.1,0,3,1,0.5,Kanten, Spalten, zpx, zpz, points)),
+      kugel_1(Kugel(0,0,0,1,0.5,Kanten, Spalten, zpx, zpz, points)),
       kugel_2(Kugel(0,0,-100,1,1,Kanten, Spalten, zpx, zpz, points))
 {
     // Setup the animation timer to fire every x msec
@@ -19,7 +19,7 @@ OGLWidget::OGLWidget(QWidget *parent)
 
     animstep = 0;
     zoom = 100;
-    rotx = -30;
+    rotx = -60;
     roty= 40;
     unfold = 15;
 
@@ -103,17 +103,18 @@ void OGLWidget::initializeGL()
 
 void OGLWidget::resizeGL(int width, int height)
 {
-//        int side = qMin(width, height);
-//            glViewport((width - side) / 2, (height - side) / 2, side, side);
 
-//            glMatrixMode(GL_PROJECTION);
-//            glLoadIdentity();
-//        #ifdef QT_OPENGL_ES_1
-//            glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-//        #else
-//            glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-//        #endif
-//            glMatrixMode(GL_MODELVIEW);
+    int side = qMin(width, height);
+    glViewport((width - side) / 2, (height - side) / 2, side, side);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+#ifdef QT_OPENGL_ES_1
+    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+#else
+    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+#endif
+    glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -139,9 +140,9 @@ void OGLWidget::paintGL()
     glTranslated(0,0,-15);
 
     // Change light position
-    float light_pos[] = { (float)kugel_1.px,
+    float light_pos[] = { float(kugel_1.px),
                           1.0f,
-                          (float)kugel_1.pz, 0.f };
+                          float (kugel_1.pz), 0.f };
     glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
 
@@ -167,10 +168,9 @@ void OGLWidget::paintGL()
 
     Kreis(4,0.1,8,0.2);
 
-
     //    kugel_2.update(kugel_1, rotx, rotz, dt);
 
-    kugel_1.update(kugel_2, rotx, rotz, dt);
+    kugel_1.update(kugel_2, rotx, rotz, dt, Versuche);
 
 
     Pfeil();
@@ -200,50 +200,55 @@ void OGLWidget::Kreis(double xmp, double ymp, double zmp, double r)
 
 void OGLWidget::Pfeil() {
 
-    double mx;
-    double mz;
+
+    double newpos_x;
+    double newpos_y;
+
+//    std::cout << "pos_x: "<< pos_x << std::endl;
+//    std::cout << "pos_y: "<< pos_y << std::endl;
+
 
     if (pos_x < 0) pos_x = 0;
     if (pos_y < 0) pos_y = 0;
     if (pos_x > 1200) pos_x = 1200;
     if (pos_y > 1200) pos_y = 1200;
 
-    if (pos_x == 0 && pos_y == 0) {
-        mx = 0;
-        mz = 0;
-    } else {
-        mx = (kugel_1.px -10) + (pos_x/width) * 20;
-        mz = (kugel_1.pz -10) + (pos_y/width) * 20;
-    }
 
-    glColor3f(0, 1.0, 1.0);
-    glLineWidth(20);
-    glBegin(GL_LINES);
-    glVertex3d(kugel_1.px, kugel_1.rad, kugel_1.pz);
-    glVertex3d(mx, kugel_1.rad,mz);
-    glEnd();
+        newpos_x = - 0.5 * width + pos_x;
+        newpos_y = - 0.5 * width + pos_y;
 
-    mdx = mx - kugel_1.px;
-    mdz = mz - kugel_1.pz;
+//        std::cout << "newpos_x: "<< newpos_x << std::endl;
+//        std::cout << "newpos_y: "<< newpos_y << std::endl;
 
-      if (shoot) {
-//        std::cout << "shoot: "<< shoot << std::endl;
-        kugel_1.dx = mdx;
-        kugel_1.dz = mdz;
-        shoot = false;
-        update();
+        mdx = newpos_x * 2/width * 10;
+        mdz = newpos_y * 2/width * 10;
+
+
+
+//    std::cout << "mdx: "<< mdx << std::endl;
+//    std::cout << "mdz: "<< mdz << std::endl;
+
+    float f = float(sqrt((pow(mdx,2))+(pow(mdz,2))));
+
+    if (f > 10) f = 10;
+
+//   std::cout << "force: "<< f << std::endl;
+
+    if (shoot) {
+        glColor3f(f/10,1-f/10,0);
+        glLineWidth(10);
+        glBegin(GL_LINES);
+        glVertex3d(kugel_1.px, kugel_1.rad, kugel_1.pz);
+        glVertex3d(kugel_1.px + mdx, kugel_1.rad,kugel_1.pz + mdz);
+        glEnd();
     }
 
 }
 
 
 
+
 void OGLWidget::Bahn() {
-
-    //und dann statt matrix[x][y]=5;
-    //matrix[x+anzahlSpalten*y]=5;
-
-
 
     for (int i=0; i<Kanten; i++) {
 
@@ -281,15 +286,21 @@ void OGLWidget::mousePressEvent(QMouseEvent *event)
 {
     // Upon mouse pressed, we store the current position...
     lastpos = event->pos();
+    pos_x = (event->buttons() & Qt::LeftButton) ? event->x() : 0;
+    pos_y = (event->buttons() & Qt::LeftButton) ? event->y() : 0;
+    shoot = true;
+    Versuche++;
 }
 
 
 void OGLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 
-    if (event->button() == Qt::LeftButton && !shoot) {
-        shoot = true;
-        Pfeil();
+    if (event->button() == Qt::LeftButton && shoot) {
+        kugel_1.dx = mdx;
+        kugel_1.dz = mdz;
+        shoot = false;
+        update();
     }
 }
 
@@ -306,9 +317,9 @@ void OGLWidget::mouseMoveEvent(QMouseEvent *event)
     //    pos_z = (event->buttons() & Qt::RightButton) ? event->y() : 0;
 
 
-//    std::cout << "pos_x: "<< pos_x << std::endl;
-//    std::cout << "pos_y: "<< pos_y << std::endl;
-//    std::cout << "pos_z: "<< pos_z << std::endl;
+    //    std::cout << "pos_x: "<< pos_x << std::endl;
+    //    std::cout << "pos_y: "<< pos_y << std::endl;
+    //    std::cout << "pos_z: "<< pos_z << std::endl;
 
 
 

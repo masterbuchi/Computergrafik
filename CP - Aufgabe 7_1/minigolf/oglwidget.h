@@ -74,7 +74,7 @@ public:
     int Kanten=8;
     int Zeilen = Kanten;
     int Spalten = 2;
-
+    int Versuche = 0;
 
     // Koordinaten des Randes
     int* points=new int[Zeilen*Spalten] {-2,-2,-2,6,2,6,2,10,6,10,6,2,2,2,2,-2};

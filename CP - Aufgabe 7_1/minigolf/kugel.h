@@ -28,6 +28,7 @@ public:
         this->Spalten = Spalten;
         this->zpx = zpx;
         this->zpz = zpz;
+        this->Versuche = Versuche;
 
     }
 
@@ -57,7 +58,7 @@ public:
 
     int Kanten;
     int Spalten;
-
+    int Versuche;
 
     int* points;
 
@@ -78,7 +79,7 @@ public:
     double PI = 3.1415;
     float PIf = 3.1414f;
 
-    void update(Kugel other, double rotx, double rotz, double dt);
+    void update(Kugel other, double rotx, double rotz, double dt, int Versuche);
 
 
     void CheckKollisionKugel(Kugel other);

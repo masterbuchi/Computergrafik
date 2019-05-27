@@ -6,20 +6,18 @@
 
 
 
-void Kugel::update(Kugel other, double rotx, double rotz, double dt) {
+void Kugel::update(Kugel other, double rotx, double rotz, double dt, int Versuche) {
 
     this -> rotx = rotx;
     this -> rotz = rotz;
     this-> dt = dt;
+    this->Versuche = Versuche;
 
-
-    ax = -sin((rotz*PI/180));
-    az = -sin((rotx*PI/180));
+//    ax = -sin((rotz*PI/180));
+//    az = -sin((rotx*PI/180));
 
 
     glPushMatrix();
-
-
 
 
     for (int i=0; i<Kanten; i++)
@@ -218,7 +216,10 @@ void Kugel::Ende() {
         dx = 0;
         dz = 0;
         if (!win) {
+
             std::cout << "Gewonnen! "<< std::endl;
+            std::cout << " "<< std::endl;
+            std::cout << "Anzahl der Versuche: " << Versuche << std::endl;
             win = true;
         }
     }
