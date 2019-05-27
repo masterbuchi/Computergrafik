@@ -70,6 +70,9 @@ public:
     // Ziel
     int zpx = 4;
     int zpz = 8;
+
+
+
     // Anzahl der Kanten;
     int Kanten=8;
     int Zeilen = Kanten;

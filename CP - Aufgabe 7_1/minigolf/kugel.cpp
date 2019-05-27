@@ -212,7 +212,7 @@ void Kugel::Ende() {
 
     double abstandZiel = Vector3(px,0,pz).getDistanceTo(Vector3(zpx,0,zpz));
 
-    if ( abstandZiel < 0.1) {
+    if ( abstandZiel < 0.2) {
         dx = 0;
         dz = 0;
         if (!win) {

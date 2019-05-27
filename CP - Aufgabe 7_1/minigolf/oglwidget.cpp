@@ -72,29 +72,58 @@ void OGLWidget::initializeGL()
 {
 
 
+
+
+
     initializeOpenGLFunctions();
 
-    // Use depth testing and the depth buffer
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    //    // Use depth testing and the depth buffer
+    //    glEnable(GL_DEPTH_TEST);
+    //    glDepthFunc(GL_LESS);
 
-    // Calculate color for each pixel fragment
-    glShadeModel(GL_SMOOTH);
+    //    // Calculate color for each pixel fragment
+    //    glShadeModel(GL_SMOOTH);
 
-    // Enable lighting in scene
+    //    // Enable lighting in scene
+    //    glEnable(GL_LIGHTING);
+
+
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_shininess[] = { 50.0 };
+    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+    glClearColor (0.0, 0.0, 0.0, 0.0);
+    glShadeModel (GL_SMOOTH);
+
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
     glEnable(GL_LIGHTING);
 
-    // Set position of light source
-    float light_pos[] = { 10.f, 10.f, 10.f, 0.f };
-    glLightfv(GL_LIGHT1, GL_POSITION, light_pos );
+    glEnable(GL_DEPTH_TEST);
 
-    // Set color for this light source
-    // (We are only specifying a diffuse light source)
-    float light_diffuse[] = { .9f, .9f, .9f, 1.f };
-    glLightfv(GL_LIGHT1, GL_DIFFUSE,  light_diffuse );
+    glEnable(GL_LIGHT0);
+    GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat spot_direction[] = { 0.0f , -1.0f, 1.0 };
 
-    // Turn on this light
-    glEnable(GL_LIGHT1);
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
+
+
+
+
+
+    //    // Turn on this light
+    //    glEnable(GL_LIGHT1);
+
+
+
 
     // Use the color of an object for light calculation
     glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
@@ -109,12 +138,6 @@ void OGLWidget::resizeGL(int width, int height)
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-#ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-#else
-    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-#endif
-    glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -131,26 +154,17 @@ void OGLWidget::paintGL()
     glLoadIdentity();
     glOrtho(-10, 10, -10, 10, 0, 200);
 
+    // Change light position
+    float light_pos[] = { float(kugel_1.px),
+                          10,
+                          float(kugel_1.pz), 1 };
+    glLightfv(GL_LIGHT0, GL_POSITION,  light_pos);
+
     // Prepare model matrix
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-
-
     glTranslated(0,0,-15);
-
-    // Change light position
-    float light_pos[] = { float(kugel_1.px),
-                          1.0f,
-                          float (kugel_1.pz), 0.f };
-    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
-
-
-    //    // Change light position
-    //    float light_pos[] = { 10.f * cosf(animstep*PIf/180.f),
-    //                          10.f,
-    //                          10.0f * sinf(animstep*PIf/180.f), 0.f };
-    //    glLightfv(GL_LIGHT1, GL_POSITION,  light_pos);
 
     // Apply rotation angles
     glRotated(-rotx, 1.0, 0.0, 0.0); // Rotate around x axis
@@ -161,20 +175,17 @@ void OGLWidget::paintGL()
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
 
-
-
     Bahn();
 
+    glColor3d(0, 1.0, 0.5);
+    Kreis(0,0,0,0.1);
 
-    Kreis(4,0.1,8,0.2);
-
-    //    kugel_2.update(kugel_1, rotx, rotz, dt);
+    glColor3d(1, 0, 0.5);
+    Kreis(4,0,8,0.2);
 
     kugel_1.update(kugel_2, rotx, rotz, dt, Versuche);
 
-
     Pfeil();
-
 
 
 }
@@ -187,10 +198,12 @@ void OGLWidget::Kreis(double xmp, double ymp, double zmp, double r)
     double y=ymp;
 
     glBegin(GL_POLYGON); //Begin Polygon coordinates
+
     for (double theta=0 ; theta<(2*3.1416) ; theta+=(2*3.1416)/360)
     {
         x = xmp+(cos(theta)*r);
         z = zmp+(sin(theta)*r);
+        glNormal3d(0,1,0);
         glVertex3d(x,y,z);
     }
     glEnd();
@@ -204,9 +217,6 @@ void OGLWidget::Pfeil() {
     double newpos_x;
     double newpos_y;
 
-//    std::cout << "pos_x: "<< pos_x << std::endl;
-//    std::cout << "pos_y: "<< pos_y << std::endl;
-
 
     if (pos_x < 0) pos_x = 0;
     if (pos_y < 0) pos_y = 0;
@@ -214,25 +224,19 @@ void OGLWidget::Pfeil() {
     if (pos_y > 1200) pos_y = 1200;
 
 
-        newpos_x = - 0.5 * width + pos_x;
-        newpos_y = - 0.5 * width + pos_y;
-
-//        std::cout << "newpos_x: "<< newpos_x << std::endl;
-//        std::cout << "newpos_y: "<< newpos_y << std::endl;
-
-        mdx = newpos_x * 2/width * 10;
-        mdz = newpos_y * 2/width * 10;
+    newpos_x = - 0.5 * width + pos_x;
+    newpos_y = - 0.5 * width + pos_y;
 
 
+    mdx = newpos_x * 2/width * 10;
+    mdz = newpos_y * 2/width * 10;
 
-//    std::cout << "mdx: "<< mdx << std::endl;
-//    std::cout << "mdz: "<< mdz << std::endl;
 
     float f = float(sqrt((pow(mdx,2))+(pow(mdz,2))));
 
     if (f > 10) f = 10;
 
-//   std::cout << "force: "<< f << std::endl;
+    //   std::cout << "force: "<< f << std::endl;
 
     if (shoot) {
         glColor3f(f/10,1-f/10,0);
@@ -256,23 +260,34 @@ void OGLWidget::Bahn() {
         glBegin(GL_QUADS);
         glColor3d(0.5, 0.0, 0.5);
 
+        Vector3 ov = Vector3(points[0+Spalten*i],0,points[1+Spalten*i]);
+        Vector3 ov2 = Vector3(points[0+Spalten*((i+1) % (Kanten))],0,points[1+Spalten*((i+1) % (Kanten))]);
+        Vector3 rv = Vector3(ov2.x - ov.x,0,ov2.z-ov.z);
+
+        // Normalvektor
+        Vector3 norm = Vector3(rv.z,0,rv.x);
+
+
+        // Normalvektor normieren
+        norm.normalize();
+
         //Normalenvektor
-        glNormal3d(points[0+Spalten*i],0,points[1+Spalten*i]);
+        glNormal3d(norm.x,0,norm.z);
         // Unten Links
         glVertex3d(points[0+Spalten*i],0,points[1+Spalten*i]);
 
         //Normalenvektor
-        glNormal3d(points[0+Spalten*((i+1) % Kanten)],0,points[1+Spalten*((i+1) % Kanten)]);
+        glNormal3d(norm.x,0,norm.z);
         // Unten Links
         glVertex3d(points[0+Spalten*((i+1) % Kanten)],0,points[1+Spalten*((i+1) % Kanten)]);
 
         //Normalenvektor
-        glNormal3d(points[0+Spalten*((i+1) % Kanten)],0.5,points[1+Spalten*((i+1) % Kanten)]);
+        glNormal3d(norm.x,0,norm.z);
         // Unten Links
         glVertex3d(points[0+Spalten*((i+1) % Kanten)],0.5,points[1+Spalten*((i+1) % Kanten)]);
 
         //Normalenvektor
-        glNormal3d(points[0+Spalten*i],0.5,points[1+Spalten*i]);
+        glNormal3d(norm.x,0,norm.z);
         // Unten Links
         glVertex3d(points[0+Spalten*i],0.5,points[1+Spalten*i]);
 
