@@ -19,32 +19,35 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt, int Versuch
 
     glPushMatrix();
 
+    for (int j=0; j<10;j++) {
 
-    for (int i=0; i<Kanten; i++)
+        for (int i=0; i<Kanten; i++)
 
-    {
+        {
 
-        KollisionmitWand(i);
+            KollisionmitWand(i);
 
+        }
+
+        CheckKollisionKugel(other);
+
+        Ende();
+
+
+        // Neuer Punkt wird bestimmt
+        px += dx*dt;
+        pz += dz*dt;
     }
 
-    CheckKollisionKugel(other);
-
-    Ende();
-
-
-    // Neuer Punkt wird bestimmt
-    px += dx*dt;
-    pz += dz*dt;
 
     Zeichnen();
 
-    //    //    dx += ax*dt;
-    //    dx *= 0.95;
+//    //    dx += ax*dt;
+//    dx *= 0.99;
 
 
-    //    //    dz += az*dt;
-    //    dz *= 0.95;
+//    //    dz += az*dt;
+//    dz *= 0.999;
 
 
 
@@ -153,13 +156,52 @@ void Kugel::KollisionmitWand(int i) {
     // Richtung des Lotvektors
     double lotrichtung = (lot_s.x-px)*dx + (lot_s.z-pz)* dz;
 
-    if ( ((lot_s.x >= ov.x) && (lot_s.x < ov2.x)) ||
-         ((lot_s.x <= ov.x) && (lot_s.x > ov2.x)) ||
-         ((lot_s.z >= ov.z) && (lot_s.z < ov2.z)) ||
-         ((lot_s.z <= ov.z) && (lot_s.z > ov2.z)) )
+
+    if (((lot_s.x <= ov.x) && (lot_s.x+rad >= ov.x)) ||
+            ((lot_s.x >= ov.x) && (lot_s.x-rad <= ov.x)) ||
+            ((lot_s.x <= ov2.x) && (lot_s.x+rad >= ov2.x)) ||
+            ((lot_s.x >= ov2.x) && (lot_s.x-rad <= ov2.x)) ||
+            ((lot_s.z <= ov.z) && (lot_s.z+rad >= ov.z)) ||
+            ((lot_s.z >= ov.z) && (lot_s.z-rad <= ov.z)) ||
+            ((lot_s.z <= ov2.z) && (lot_s.z+rad >= ov2.z)) ||
+            ((lot_s.z >= ov2.z) && (lot_s.z-rad <= ov2.z))) {
+        norm = Vector3(px-ov2.x,0,pz-ov2.z);
+
+        double abstand_k_e = Vector3(px,0,pz).getDistanceTo(Vector3(ov2.x,0,ov2.z));
+
+        // Wenn der Kugelrand gegen den Lotpunkt kommt
+        if (abstand_k_e<=rad && lotrichtung > 0) {
+
+             std::cout << "Ecke! "<< std::endl;
+
+            // Zwischenrechnung
+            double powx = pow(norm.x,2);
+            double powz = pow(norm.z,2);
+            double bruch = 2/(powx+powz);
+
+            // Zwischenspeichern der alten dx und dz-Werte
+            double dx_t = dx;
+            double dz_t = dz;
+
+            // Berechnung der neuen Werte
+            dx = ((1-bruch*powx)*dx_t+(0-(bruch*norm.x*norm.z))*dz_t);
+            dz = ((0-bruch*norm.x*norm.z)*dx_t+(1-bruch*powz)*dz_t);
+
+        }
+
+    }
+    if (
+            ((lot_s.x >= ov.x) && (lot_s.x < ov2.x)) ||
+            ((lot_s.x <= ov.x) && (lot_s.x > ov2.x)) ||
+            ((lot_s.z >= ov.z) && (lot_s.z < ov2.z)) ||
+            ((lot_s.z <= ov.z) && (lot_s.z > ov2.z))             )
     {
+        // Normalvektor
+        norm = Vector3(-rv.z,0,rv.x);
         // Wenn der Kugelrand gegen den Lotpunkt kommt
         if (abstand_lot<=rad && lotrichtung > 0) {
+            std::cout << "Wand! "<< std::endl;
+
             Kollisionen++;
             // Zwischenrechnung
             double powx = pow(norm.x,2);
@@ -173,38 +215,6 @@ void Kugel::KollisionmitWand(int i) {
             // Berechnung der neuen Werte
             dx = ((1-bruch*powx)*dx_t+(0-(bruch*norm.x*norm.z))*dz_t);
             dz = ((0-bruch*norm.x*norm.z)*dx_t+(1-bruch*powz)*dz_t);
-        }
-    } else if ( ((lot_s.x <= ov.x) && (lot_s.x+rad >= ov.x)) ||
-                ((lot_s.x >= ov.x) && (lot_s.x-rad <= ov.x)) ||
-                ((lot_s.x <= ov2.x) && (lot_s.x+rad >= ov2.x)) ||
-                ((lot_s.x >= ov2.x) && (lot_s.x-rad <= ov2.x)) ||
-
-                ((lot_s.z <= ov.z) && (lot_s.z+rad >= ov.z)) ||
-                ((lot_s.z >= ov.z) && (lot_s.z-rad <= ov.z)) ||
-                ((lot_s.z <= ov2.z) && (lot_s.z+rad >= ov2.z)) ||
-                ((lot_s.z >= ov2.z) && (lot_s.z-rad <= ov2.z))) {
-
-        norm = Vector3(px-ov2.x,0,pz-ov2.z);
-
-        double abstand_k_e = Vector3(px,0,pz).getDistanceTo(Vector3(ov2.x,0,ov2.z));
-
-        // Wenn der Kugelrand gegen den Lotpunkt kommt
-        if (abstand_k_e<=rad && lotrichtung > 0) {
-
-
-            // Zwischenrechnung
-            double powx = pow(norm.x,2);
-            double powz = pow(norm.z,2);
-            double bruch = 2/(powx+powz);
-
-            // Zwischenspeichern der alten dx und dz-Werte
-            double dx_t = dx;
-            double dz_t = dz;
-
-            // Berechnung der neuen Werte
-            dx = ((1-bruch*powx)*dx_t+(0-(bruch*norm.x*norm.z))*dz_t);
-            dz = ((0-bruch*norm.x*norm.z)*dx_t+(1-bruch*powz)*dz_t);
-
         }
     }
 }

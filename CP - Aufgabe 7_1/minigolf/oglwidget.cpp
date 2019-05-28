@@ -7,7 +7,7 @@
 // Kugel(px, py, pz, masse, radius, Kanten, rot_rad, s)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(0,0,0,1,0.5,Kanten, Spalten, zpx, zpz, points)),
+      kugel_1(Kugel(0,0,1.99,1,0.5,Kanten, Spalten, zpx, zpz, points)),
       kugel_2(Kugel(0,0,-100,1,1,Kanten, Spalten, zpx, zpz, points))
 {
     // Setup the animation timer to fire every x msec
@@ -21,7 +21,8 @@ OGLWidget::OGLWidget(QWidget *parent)
     zoom = 100;
     rotx = -60;
     roty= 40;
-    unfold = 15;
+    unfold = 1;
+    kugel_1.dx = 2;
 
 }
 
@@ -71,10 +72,6 @@ void OGLWidget::setUnfold(int newunfold)
 void OGLWidget::initializeGL()
 {
 
-
-
-
-
     initializeOpenGLFunctions();
 
     //    // Use depth testing and the depth buffer
@@ -114,15 +111,6 @@ void OGLWidget::initializeGL()
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-
-
-
-
-
-    //    // Turn on this light
-    //    glEnable(GL_LIGHT1);
-
-
 
 
     // Use the color of an object for light calculation
