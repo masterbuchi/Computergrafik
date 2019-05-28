@@ -220,8 +220,8 @@ void OGLWidget::Pfeil() {
 
     if (pos_x < 0) pos_x = 0;
     if (pos_y < 0) pos_y = 0;
-    if (pos_x > 1200) pos_x = 1200;
-    if (pos_y > 1200) pos_y = 1200;
+    if (pos_x > 800) pos_x = 800;
+    if (pos_y > 800) pos_y = 800;
 
 
     newpos_x = - 0.5 * width + pos_x;

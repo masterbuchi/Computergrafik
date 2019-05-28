@@ -28,7 +28,6 @@ public:
         this->Spalten = Spalten;
         this->zpx = zpx;
         this->zpz = zpz;
-        this->Versuche = Versuche;
 
     }
 
@@ -59,6 +58,7 @@ public:
     int Kanten;
     int Spalten;
     int Versuche;
+    int Kollisionen = 0;
 
     int* points;
 

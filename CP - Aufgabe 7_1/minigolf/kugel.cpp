@@ -13,8 +13,8 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt, int Versuch
     this-> dt = dt;
     this->Versuche = Versuche;
 
-//    ax = -sin((rotz*PI/180));
-//    az = -sin((rotx*PI/180));
+    //    ax = -sin((rotz*PI/180));
+    //    az = -sin((rotx*PI/180));
 
 
     glPushMatrix();
@@ -39,12 +39,12 @@ void Kugel::update(Kugel other, double rotx, double rotz, double dt, int Versuch
 
     Zeichnen();
 
-    //    dx += ax*dt;
-    dx *= 0.95;
+    //    //    dx += ax*dt;
+    //    dx *= 0.95;
 
 
-    //    dz += az*dt;
-    dz *= 0.95;
+    //    //    dz += az*dt;
+    //    dz *= 0.95;
 
 
 
@@ -160,6 +160,7 @@ void Kugel::KollisionmitWand(int i) {
     {
         // Wenn der Kugelrand gegen den Lotpunkt kommt
         if (abstand_lot<=rad && lotrichtung > 0) {
+            Kollisionen++;
             // Zwischenrechnung
             double powx = pow(norm.x,2);
             double powz = pow(norm.z,2);
@@ -212,14 +213,14 @@ void Kugel::Ende() {
 
     double abstandZiel = Vector3(px,0,pz).getDistanceTo(Vector3(zpx,0,zpz));
 
-    if ( abstandZiel < 0.2) {
+    if ( abstandZiel < 0.1) {
         dx = 0;
         dz = 0;
         if (!win) {
-
             std::cout << "Gewonnen! "<< std::endl;
             std::cout << " "<< std::endl;
             std::cout << "Anzahl der Versuche: " << Versuche << std::endl;
+            std::cout << "Anzahl der Kollisionen: " << Kollisionen << std::endl;
             win = true;
         }
     }

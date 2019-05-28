@@ -98,7 +98,7 @@ public:
     int roty=0;
     int rotz=0;
 
-    int width = 1200;
+    int width = 800;
 
     Kugel kugel_1;
     Kugel kugel_2;
