@@ -12,9 +12,8 @@ class Kugel
 {
 public:
 
-    Kugel(double px, double py, double pz, double masse, double radius, int Kanten, int Spalten, int zpx, int zpz, int* points, int nr_lat = 90, int nr_lon = 90)
+    Kugel(double px, double py, double pz, double masse, double radius, int zpx, int zpz, int* points, int nr_lat = 90, int nr_lon = 90)
     {
-
         this->px = px;
         this->py = py;
         this->pz = pz;
@@ -22,13 +21,10 @@ public:
         this->masse = masse;
         this->nr_lat = nr_lat;
         this->nr_lon = nr_lon;
-        this->Kanten = Kanten;
         this->py = radius;
         this->points = points;
-        this->Spalten = Spalten;
         this->zpx = zpx;
         this->zpz = zpz;
-        this->Versuche = Versuche;
 
     }
 
@@ -42,12 +38,6 @@ public:
     double py = 0.0;
     double pz = 0.0;
 
-//    Vector3 ov = Vector3(0,0,0);
-//    Vector3 ov2 = Vector3(0,0,0);
-//    Vector3 rv = Vector3(0,0,0);
-//    Vector3 norm = Vector3(0,0,0);
-//    Vector3 lot_s = Vector3(0,0,0);
-
     //Daten Kugel
     double rad;
     double masse;
@@ -56,8 +46,7 @@ public:
 
     //Allgemeine Daten
 
-    int Kanten;
-    int Spalten;
+
     int Versuche;
 
     int* points;
@@ -68,27 +57,16 @@ public:
     int zpz;
     boolean win = false;
 
-    // BESCHLEUNIGUNG
-    double ax;
-    double az;
 
-    double rotx;
-    double rotz;
     double dt;
 
     double PI = 3.1415;
     float PIf = 3.1414f;
 
-    void update(double rotx, double rotz, double dt, int Versuche);
-
-
-//    void CheckKollisionKugel(Kugel other);
-
+    void update(double dt, int Versuche);
 
     void Ende();
     void Zeichnen();
-//    void Lotschnittpunkt();
-//    void KollisionmitWand(int i);
 };
 
 #endif // KUGEL_H

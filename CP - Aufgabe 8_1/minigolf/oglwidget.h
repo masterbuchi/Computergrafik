@@ -57,6 +57,7 @@ protected:
     void paintGL();
 
 protected:
+
     QTimer* animtimer; // Timer needed to step animation every x msec
     int animstep;      // Current animation step (used to rotate triangle
     void Bahn();
@@ -97,8 +98,6 @@ public:
     int rotx=0;       // Rotation angles (0..360)
     int roty=0;
     int rotz=0;
-
-    int width = 1200;
 
     Kugel kugel_1;
     Kugel kugel_2;

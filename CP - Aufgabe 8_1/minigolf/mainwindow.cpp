@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDesktopWidget>
+#include <QtCore>
+#include <QTGui>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -42,3 +44,4 @@ void MainWindow::onChangeRotation(int dx, int dy, int dz)
 
     // NB: SetValue will emit valueChanged signal, so the scene gets updated
 }
+

@@ -2,14 +2,15 @@
 #include "vector3.h"
 #include <cmath>
 #include <iostream>
+#include <QPainter>
 
 
 // Kugel(px, py, pz, masse, radius, Kanten, rot_rad, s)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(0,0,0,1,0.5,Kanten, Spalten, zpx, zpz, points)),
-      kugel_2(Kugel(-4,0,16,1000,1,Kanten, Spalten, zpx, zpz, points)),
-      kugel_3(Kugel(-21,-0.5,6,1000,1,Kanten, Spalten, zpx, zpz, points))
+      kugel_1(Kugel(0,0,0,1,0.5, zpx, zpz, points)),
+      kugel_2(Kugel(-4,0,16,1000,1, zpx, zpz, points)),
+      kugel_3(Kugel(-21,-0.5,6,1000,1, zpx, zpz, points))
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -21,9 +22,8 @@ OGLWidget::OGLWidget(QWidget *parent)
     animstep = 0;
     zoom = 60;
     rotx = -90;
-    roty= 0;
-    unfold = 15;
-    trans_lr = -6;
+    unfold = 5;
+    trans_lr = 6;
     trans_ou = 5;
 
 
@@ -169,12 +169,13 @@ void OGLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glTranslated(trans_ou,-trans_lr,-10);
-
-    //     std::cout << "trans_lr: "<< -trans_lr << std::endl;
 
 
-    glPushMatrix();
+
+    glTranslated(trans_lr,trans_ou,-10);
+
+
+
     //Apply scaling
     double scale = zoom/100.0;
     glScaled( scale, scale, scale ); // Scale along all axis
@@ -185,11 +186,6 @@ void OGLWidget::paintGL()
     glRotated(rotz, 0.0, 0.0, 1.0); // Rotate around z axis
 
 
-    Bahn();
-
-
-    Boden();
-
     glColor3d(0, 1.0, 0.5);
     Kreis(0,0.1,0,0.1);
 
@@ -197,8 +193,8 @@ void OGLWidget::paintGL()
     Kreis(-12,0.1,6,0.2);
 
 
-
     if (eckenbeschl) {
+
         // Kollisionsprüfung der Ecken mit einer Beschleunigung
         for (int i=0; i<Kanten; i++)
 
@@ -241,30 +237,19 @@ void OGLWidget::paintGL()
 
     }
 
-
-
     // Zeichnen
-    kugel_1.update(rotx, rotz, dt, Versuche);
-    kugel_2.update(rotx, rotz, dt, Versuche);
-    kugel_3.update(rotx, rotz, dt, Versuche);
-
-
-    //    std::cout << "nachher1: " << newd.x << std::endl;
-
-
-
-    //    Vector3 newd2 = CheckKollisionKugel(kugel_2, kugel_1);
-    //    kugel_2.dx = newd2.x;
-    //    kugel_2.dz = newd2.z;
-
-
-    // Zeichnen des Pfeils für die Geschwindigkeit
     Pfeil();
 
-    glPopMatrix();
+    Boden();
+
+    Bahn();
+
+    kugel_1.update(dt, Versuche);
+    kugel_2.update(dt, Versuche);
+    kugel_3.update(dt, Versuche);
+
 
 }
-
 
 // Geklaute Methode aus dem Netz
 void OGLWidget::Kreis(double xmp, double ymp, double zmp, double r)
@@ -386,8 +371,8 @@ Vector3 OGLWidget::Eckenbeschleunigung(Kugel kugel, Vector3 ov) {
 
     if (rv.getLength() <= 2) {
 
-        kugel.dx += -rv.x * dt;
-        kugel.dz += -rv.z * dt;
+        kugel.dx += -4*rv.x * dt;
+        kugel.dz += -4*rv.z * dt;
     }
 
     return Vector3 (kugel.dx, 0, kugel.dz);
@@ -461,22 +446,37 @@ void OGLWidget::Pfeil() {
 
 
     double newpos_x;
-    double newpos_y;
+    double newpos_z;
+    double newpos_x_zeichen;
+    double newpos_z_zeichen;
 
 
-    if (pos_x < 0) pos_x = 0;
-    if (pos_y < 0) pos_y = 0;
-    if (pos_x > 1200) pos_x = 1200;
-    if (pos_y > 1200) pos_y = 1200;
+    int width = this->geometry().width();
+    int height = this->geometry().height();
 
 
-    newpos_x = - 0.5 * width + pos_x;
-    newpos_y = - 0.5 * width + pos_y;
 
 
-    mdx = newpos_x * 2/width * 10;
-    mdz = newpos_y * 2/width * 10;
 
+    newpos_x =  - 0.5 * width + pos_x;
+    newpos_z = - 0.5 * height + pos_y;
+
+
+
+
+    newpos_x_zeichen = (newpos_x*20/width - trans_lr) / (zoom/100.0);
+    newpos_z_zeichen = (newpos_z*20/height + trans_ou) / (zoom/100.0);
+
+
+
+
+
+
+    mdx = (kugel_1.px - newpos_x_zeichen);
+    mdz = (kugel_1.pz - newpos_z_zeichen);
+
+    //    std::cout << "mdx: "<< mdx << std::endl;
+    //    std::cout << "mdz: "<< mdz << std::endl;
 
     float f = float(sqrt((pow(mdx,2))+(pow(mdz,2))));
 
@@ -487,7 +487,7 @@ void OGLWidget::Pfeil() {
         glLineWidth(10);
         glBegin(GL_LINES);
         glVertex3d(kugel_1.px, kugel_1.rad, kugel_1.pz);
-        glVertex3d(kugel_1.px + mdx, kugel_1.rad,kugel_1.pz + mdz);
+        glVertex3d(newpos_x_zeichen, kugel_1.rad, newpos_z_zeichen);
         glEnd();
     }
 
@@ -592,8 +592,8 @@ void OGLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 
     if (event->button() == Qt::LeftButton && shoot) {
-        kugel_1.dx = mdx;
-        kugel_1.dz = mdz;
+        kugel_1.dx = -mdx;
+        kugel_1.dz = -mdz;
         shoot = false;
         update();
     }
