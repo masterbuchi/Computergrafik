@@ -454,23 +454,11 @@ void OGLWidget::Pfeil() {
     int width = this->geometry().width();
     int height = this->geometry().height();
 
-
-
-
-
     newpos_x =  - 0.5 * width + pos_x;
     newpos_z = - 0.5 * height + pos_y;
 
-
-
-
     newpos_x_zeichen = (newpos_x*20/width - trans_lr) / (zoom/100.0);
     newpos_z_zeichen = (newpos_z*20/height + trans_ou) / (zoom/100.0);
-
-
-
-
-
 
     mdx = (kugel_1.px - newpos_x_zeichen);
     mdz = (kugel_1.pz - newpos_z_zeichen);
