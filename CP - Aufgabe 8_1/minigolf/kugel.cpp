@@ -13,8 +13,8 @@ void Kugel::update(double dt, int Versuche) {
 
 
 
-    dx *= 0.99;
-    dz *= 0.99;
+//    dx *= 0.99;
+//    dz *= 0.99;
 
     // Neuer Punkt wird bestimmt
     px += dx*dt;
