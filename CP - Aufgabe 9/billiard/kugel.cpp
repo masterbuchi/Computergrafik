@@ -6,18 +6,18 @@
 
 
 
-void Kugel::update(double dt, int Versuche, float cr, float cg, float cb) {
+int Kugel::update(double dt, int Punkte, float cr, float cg, float cb) {
 
     this-> dt = dt;
-    this->Versuche = Versuche;
+    this->Punkte = Punkte;
     this->cr = cr;
     this->cg = cg;
     this->cb = cb;
 
 
 
-    dx *= 0.99;
-    dz *= 0.99;
+//    dx *= 0.99;
+//    dz *= 0.99;
 
     // Neuer Punkt wird bestimmt
     px += dx*dt;
@@ -27,25 +27,50 @@ void Kugel::update(double dt, int Versuche, float cr, float cg, float cb) {
 
     Zeichnen();
 
+    return this->Punkte;
+
 
 }
 
 
 void Kugel::Ende() {
 
-    double abstandZiel = Vector3(px,0,pz).getDistanceTo(Vector3(zpx,0,zpz));
 
-    if ( abstandZiel < 0.2) {
-        dx = 0;
-        dz = 0;
-        if (!win) {
+    for (int i = 0; i < Zeilen; i++ ) {
+        double abstandZiel = Vector3(px,0,pz).getDistanceTo(Vector3(ziele[0+Spalten*i],0,ziele[1+Spalten*i]));
 
-            std::cout << "Gewonnen! "<< std::endl;
-            std::cout << " "<< std::endl;
-            std::cout << "Anzahl der Versuche: " << Versuche << std::endl;
-            win = true;
+        if ( abstandZiel < 1) {
+            dx *= 0.7;
+            dz *= 0.7;
+
+            if (abs(dx) <= 0.0001 && abs(dz) <= 0.0001) {
+                dx = 0;
+                dz = 0;
+
+                if (cr+cg+cb == 3) {
+                    px = 0;
+                    pz = 10;
+                } else {
+
+                    if (!win) {
+                        Punkte += 10;
+                        std::cout << "Sehr gut! "<< std::endl;
+                        std::cout << " "<< std::endl;
+                        std::cout << "Punkte: " << Punkte << std::endl;
+                        win = true;
+                    }
+                }
+
+            }
+
+
         }
+
+
     }
+
+
+
 }
 
 

@@ -12,7 +12,7 @@ class Kugel
 {
 public:
 
-    Kugel(double px, double py, double pz, double masse, double radius, int zpx, int zpz, int* points, int nr_lat = 90, int nr_lon = 90)
+    Kugel(double px, double py, double pz, double masse, double radius, int zpx, int zpz, double* points, int nr_lat = 90, int nr_lon = 90)
     {
         this->px = px;
         this->py = py;
@@ -49,9 +49,24 @@ public:
    //Farben rgb
     float cr,cg,cb;
 
-    int Versuche;
+    int Punkte;
 
-    int* points;
+    double* points;
+
+    int Zeilen = 6.0;
+            int Spalten = 2;
+
+
+    double* ziele=new double[Zeilen*Spalten]
+    {
+            -10,0,
+            -11,20,
+            -10,40,
+            10,40,
+            11,20,
+            10,0
+
+};
 
 
     //Ziel
@@ -65,7 +80,7 @@ public:
     double PI = 3.1415;
     float PIf = 3.1414f;
 
-    void update(double dt, int Versuche,float cr, float cg, float cb);
+    int update(double dt, int Punkte,float cr, float cg, float cb);
 
     void Ende();
     void Zeichnen();

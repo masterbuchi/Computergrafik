@@ -82,17 +82,43 @@ public:
 
 
     // Anzahl der Kanten;
-    int Kanten=4;
+    const int Kanten=24;
     int Zeilen = Kanten;
-    int Spalten = 2;
-    int Versuche = 0;
+    const int Spalten = 2;
+    int Punkte = 0;
     boolean eckenbeschl = true;
 
     // Koordinaten des Randes
     //    int* points=new int[Zeilen*Spalten] {-2,-2,-2,6,2,6,2,10,6,10,6,2,2,2,2,-2};
     //    int* points=new int[Zeilen*Spalten] {-5,-2,-5,1,-7,1,-7,4,-3,4,-1,3,0,4,3,4,3,1,0,1,-1,2,-3,3,-5,3,-4,2,-3,2,-3,-2};
     //    int* points=new int[Zeilen*Spalten] {-8,-6,-8,8,-16,20,-16,28,-32,28,-36,16,-36,8,-28,20,-16,12,-24,0,-48,0,-48,16,-40,36,0,36,0,18,8,8,8,-6};
-    int* points=new int[Zeilen*Spalten] {-10,-10,-10,30,10,30,10,-10};
+    double* points=new double[Zeilen*Spalten]
+    {
+            -8.59,0,
+            -10,-1.41,
+            -11.41,0,
+            -10,1.41,
+            -10,18.9,
+            -12,19.2,
+            -12,20.9,
+            -10,21.1,
+            -10,38.59,
+            -11.41,40,
+            -10,41.41,
+            -8.59,40,
+            8.59,40,
+            10,41.41,
+            11.41,40,
+            10,38.59,
+            10,21.1,
+            12,20.9,
+            12,19.2,
+            10,18.9,
+            10,1.41,
+            11.41,0,
+            10,-1.41,
+            8.59,0
+};
 
 
 

@@ -9,10 +9,11 @@
 // Kugel(px, py, pz, masse, radius, Kanten, rot_rad, s)
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-      kugel_1(Kugel(0,0,0,1,0.45, zpx, zpz, points)),
-      kugel_2(Kugel(0,0,20,1,0.45, zpx, zpz, points)),
-      kugel_3(Kugel(0.45,0,20.78,1,0.45, zpx, zpz, points)),
-      kugel_4(Kugel(-0.45,0,20.78,1,0.45, zpx, zpz, points))
+      kugel_1(Kugel(0,0,10,1,0.45, zpx, zpz, points)),
+      kugel_2(Kugel(0,0,30,1,0.45, zpx, zpz, points)),
+      kugel_3(Kugel(0.45,0,30.78,1,0.45, zpx, zpz, points)),
+      kugel_4(Kugel(-0.45,0,30.78,1,0.45, zpx, zpz, points))
+
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -26,7 +27,7 @@ OGLWidget::OGLWidget(QWidget *parent)
     rotx = -90;
     unfold = 5;
     trans_lr = 0;
-    trans_ou = 4.5;
+    trans_ou = 9;
 
 
 }
@@ -189,27 +190,7 @@ void OGLWidget::paintGL()
 
 
     glColor3d(0, 1.0, 0.5);
-    Kreis(0,0.1,0,0.1);
-
-    glColor3d(1, 0, 0.5);
-    Kreis(-12,0.1,6,0.2);
-
-
-    if (eckenbeschl) {
-
-        // Kollisionsprüfung der Ecken mit einer Beschleunigung
-        for (int i=0; i<Kanten; i++)
-
-        {
-            // Jeweilige Ortsvektoren bestimmen
-            Vector3 ov1 = Vector3(points[0+Spalten*i],0,points[1+Spalten*i]);
-
-            Vector3 kugeldneu = Eckenbeschleunigung(kugel_1, ov1);
-            kugel_1.dx = kugeldneu.x;
-            kugel_1.dz = kugeldneu.z;
-
-        }
-    }
+    Kreis(0,0.1,10,0.1);
 
     // KugelKollision mit Kugel 2 prüfen
     Vector4 newd = CheckKollisionKugel(kugel_1, kugel_2);
@@ -219,7 +200,6 @@ void OGLWidget::paintGL()
     kugel_2.dz = newd.a;
 
 
-
     // KugelKollision mit Kugel 3 prüfen
     Vector4 newd2 = CheckKollisionKugel(kugel_1, kugel_3);
     kugel_1.dx = newd2.x;
@@ -227,7 +207,7 @@ void OGLWidget::paintGL()
     kugel_3.dx = newd2.z;
     kugel_3.dz = newd2.a;
 
-    // KugelKollision mit Kugel 3 prüfen
+    // KugelKollision mit Kugel 4 prüfen
     Vector4 newd3 = CheckKollisionKugel(kugel_1, kugel_4);
     kugel_1.dx = newd3.x;
     kugel_1.dz = newd3.y;
@@ -235,26 +215,27 @@ void OGLWidget::paintGL()
     kugel_4.dz = newd3.a;
 
 
-    // KugelKollision mit Kugel 3 prüfen
-    Vector4 newd4 = CheckKollisionKugel(kugel_2, kugel_3);
-    kugel_2.dx = newd4.x;
-    kugel_2.dz = newd4.y;
-    kugel_3.dx = newd4.z;
-    kugel_3.dz = newd4.a;
+    // KugelKollision2 mit Kugel 3 prüfen
+    Vector4 newd7 = CheckKollisionKugel(kugel_2, kugel_3);
+    kugel_2.dx = newd7.x;
+    kugel_2.dz = newd7.y;
+    kugel_3.dx = newd7.z;
+    kugel_3.dz = newd7.a;
 
-    // KugelKollision mit Kugel 3 prüfen
-    Vector4 newd5 = CheckKollisionKugel(kugel_2, kugel_4);
-    kugel_2.dx = newd5.x;
-    kugel_2.dz = newd5.y;
-    kugel_4.dx = newd5.z;
-    kugel_4.dz = newd5.a;
+    // KugelKollision2 mit Kugel 4 prüfen
+    Vector4 newd8 = CheckKollisionKugel(kugel_2, kugel_4);
+    kugel_2.dx = newd8.x;
+    kugel_2.dz = newd8.y;
+    kugel_4.dx = newd8.z;
+    kugel_4.dz = newd8.a;
 
-    // KugelKollision mit Kugel 3 prüfen
-    Vector4 newd6 = CheckKollisionKugel(kugel_3, kugel_4);
-    kugel_3.dx = newd6.x;
-    kugel_3.dz = newd6.y;
-    kugel_4.dx = newd6.z;
-    kugel_4.dz = newd6.a;
+    // KugelKollision3 mit Kugel 4 prüfen
+    Vector4 newd12 = CheckKollisionKugel(kugel_3, kugel_4);
+    kugel_3.dx = newd12.x;
+    kugel_3.dz = newd12.y;
+    kugel_4.dx = newd12.z;
+    kugel_4.dz = newd12.a;
+
 
 
 
@@ -266,10 +247,9 @@ void OGLWidget::paintGL()
         Vector3 ov1 = Vector3(points[0+Spalten*i],0,points[1+Spalten*i]);
         Vector3 ov2 = Vector3(points[0+Spalten*((i+1) % (Kanten))],0,points[1+Spalten*((i+1) % (Kanten))]);
 
-        Vector3 kugeldneu = KollisionmitWand(kugel_1, ov1, ov2);
-        kugel_1.dx = kugeldneu.x;
-        kugel_1.dz = kugeldneu.z;
-
+        Vector3 kugeldneu1 = KollisionmitWand(kugel_1, ov1, ov2);
+        kugel_1.dx = kugeldneu1.x;
+        kugel_1.dz = kugeldneu1.z;
         Vector3 kugeldneu2 = KollisionmitWand(kugel_2, ov1, ov2);
         kugel_2.dx = kugeldneu2.x;
         kugel_2.dz = kugeldneu2.z;
@@ -291,13 +271,14 @@ void OGLWidget::paintGL()
 
     float cr, cg, cb;
     cr = cg = cb = 1.0f;
-    kugel_1.update(dt, Versuche, cr, cg, cb);
+    Punkte = kugel_1.update(dt, Punkte, cr, cg, cb);
 
     cr = 1.0f;
     cg = cb = 0;
-    kugel_2.update(dt, Versuche, cr, cg, cb);
-    kugel_3.update(dt, Versuche, cr, cg, cb);
-    kugel_4.update(dt, Versuche, cr, cg, cb);
+    Punkte = kugel_2.update(dt, Punkte, cr, cg, cb);
+    Punkte = kugel_3.update(dt, Punkte, cr, cg, cb);
+    Punkte = kugel_4.update(dt, Punkte, cr, cg, cb);
+
 
 
 }
@@ -606,40 +587,77 @@ void OGLWidget::Bahn() {
 
 void OGLWidget::Boden(){
 
-    glColor3d(0, 0.5, 0.5);
-    glBegin(GL_QUAD_STRIP); //Begin Polygon coordinates
-
-    double x;
-    double z;
 
 
-    x = points[0+Spalten*0];
-    z = points[1+Spalten*0];
+    glColor3d(1, 0.5, 0);
+    // Erste Ecke
+    glBegin(GL_QUADS); //Begin Polygon coordinates
     glNormal3d(0,1,0);
-    glVertex3d(x,0,z);
-
-    x = points[0+Spalten*(Kanten-1)];
-    z = points[1+Spalten*(Kanten-1)];
-    glNormal3d(0,1,0);
-    glVertex3d(x,0,z);
-
-    for (int i = 1; i <= Kanten/2; i++) {
-
-
-        x = points[0+Spalten*i];
-        z = points[1+Spalten*i];
-        glNormal3d(0,1,0);
-        glVertex3d(x,0,z);
-
-        x = points[0+Spalten*(Kanten-(i+1))];
-        z = points[1+Spalten*(Kanten-(i+1))];
-        glNormal3d(0,1,0);
-        glVertex3d(x,0,z);
-
-    }
-
+    glVertex3d(-8.59,0,0);
+    glVertex3d(-10,0,-1.41);
+    glVertex3d(-11.41,0,0);
+    glVertex3d(-10,0,1.41);
     glEnd();
+
+    // Kante 1
+    glBegin(GL_QUADS); //Begin Polygon coordinates
+    glNormal3d(0,1,0);
+    glVertex3d(-10,0,18.9);
+    glVertex3d(-12,0,19.2);
+    glVertex3d(-12,0,20.9);
+    glVertex3d(-10,0,21.1);
+    glEnd();
+
+    // Zweite Ecke
+    glBegin(GL_QUADS); //Begin Polygon coordinates
+    glNormal3d(0,1,0);
+    glVertex3d(-10,0,38.59);
+    glVertex3d(-11.41,0,40);
+    glVertex3d(-10,0,41.41);
+    glVertex3d(-8.59,0,40);
+    glEnd();
+
+    // Dritte Ecke
+    glBegin(GL_QUADS); //Begin Polygon coordinates
+    glNormal3d(0,1,0);
+    glVertex3d(8.59,1,40);
+    glVertex3d(10,0,41.41);
+    glVertex3d(11.41,0,40);
+    glVertex3d(10,0,38.59);
+    glEnd();
+
+    // Kante 2
+    glBegin(GL_QUADS); //Begin Polygon coordinates
+    glNormal3d(0,1,0);
+    glVertex3d(10,0,21.1);
+    glVertex3d(12,0,20.9);
+    glVertex3d(12,0,19.2);
+    glVertex3d(10,0,18.9);
+    glEnd();
+
+    // Ecke Vier
+    glBegin(GL_QUADS); //Begin Polygon coordinates
+    glNormal3d(0,1,0);
+    glVertex3d(10,0,1.41);
+    glVertex3d(11.41,0,0);
+    glVertex3d(10,0,-1.41);
+    glVertex3d(8.59,0,0);
+    glEnd();
+
+    // Mittelfeld
+    glColor3d(0, 0.5, 0.5);
+    glBegin(GL_QUADS); //Begin Polygon coordinates
+    glNormal3d(0,1,0);
+    glVertex3d(-10,0,0);
+    glVertex3d(-10,0,40);
+    glVertex3d(10,0,40);
+    glVertex3d(10,0,0);
+    glEnd();
+
 }
+
+
+
 
 
 void OGLWidget::mousePressEvent(QMouseEvent *event)
@@ -649,7 +667,6 @@ void OGLWidget::mousePressEvent(QMouseEvent *event)
     pos_x = (event->buttons() & Qt::LeftButton) ? event->x() : 0;
     pos_y = (event->buttons() & Qt::LeftButton) ? event->y() : 0;
     shoot = true;
-    Versuche++;
 }
 
 
@@ -727,3 +744,46 @@ void OGLWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
 }
+
+
+
+
+//void OGLWidget::Boden(){
+
+
+
+
+//    glColor3d(0, 0.5, 0.5);
+//    glBegin(GL_QUAD_STRIP); //Begin Polygon coordinates
+
+//    double x;
+//    double z;
+
+
+//    x = points[0+Spalten*0];
+//    z = points[1+Spalten*0];
+//    glNormal3d(0,1,0);
+//    glVertex3d(x,0,z);
+
+//    x = points[0+Spalten*(Kanten-1)];
+//    z = points[1+Spalten*(Kanten-1)];
+//    glNormal3d(0,1,0);
+//    glVertex3d(x,0,z);
+
+//    for (int i = 1; i <= Kanten/2; i++) {
+
+
+//        x = points[0+Spalten*i];
+//        z = points[1+Spalten*i];
+//        glNormal3d(0,1,0);
+//        glVertex3d(x,0,z);
+
+//        x = points[0+Spalten*(Kanten-(i+1))];
+//        z = points[1+Spalten*(Kanten-(i+1))];
+//        glNormal3d(0,1,0);
+//        glVertex3d(x,0,z);
+
+//    }
+
+//    glEnd();
+//}
